@@ -9,10 +9,13 @@ function GhostHorseClient () {
     var self = this;
 
     this._processed = {};
-    this._audioContext;
+    this._audioContext = null;
     this._tweetCount = 0;
 
     this.init = function (settings) {
+        // Init Parse account
+        Parse.initialize("M2DRuaNAnfzeQbBQubwFgfbmJJDRRbndjCCECou9", "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA");
+        // Init PubSub to Node server
         self.setupBayeuxHandlers(settings);
 
         try {
@@ -37,7 +40,7 @@ function GhostHorseClient () {
         self.client.subscribe('/horsemouth', self._processHorseMessage.bind(self));
 
         // self.client.subscribe('/horsemauger', function () {});
-    }
+    };
     this._createEventHandlers();
 
     soundManager.setup({
@@ -110,8 +113,8 @@ GhostHorseClient.prototype._createEventHandlers = function () {
     var self = this;
 
     jQuery('ul#audio').on('click', 'a.horse', function (el) {
-        var el = $(el.currentTarget),
-            tid = el.data('id'),
+        var cel = $(el.currentTarget),
+            tid = cel.data('id'),
             t = self._processed[tid],
             sid = String(tid),
             sound;
@@ -122,13 +125,13 @@ GhostHorseClient.prototype._createEventHandlers = function () {
                 id: sid,
                 url: t.audioFile,
                 onload: function () {
-                    self._displaySpokenText(el, t.text, this.duration || this.durationEstimate);
+                    self._displaySpokenText(cel, t.text, this.duration || this.durationEstimate);
                 },
                 onplay: function () {
-                    el.parent().addClass('speaking');
+                    cel.parent().addClass('speaking');
                 },
                 onfinish: function () {
-                    el.parent().removeClass('speaking');
+                    cel.parent().removeClass('speaking');
                 }
             });
             // This doesn't work!
