@@ -11,12 +11,11 @@ function GhostHorseClient () {
     this._processed = {};
     this._audioContext = null;
     this._tweetCount = 0;
+    this._horseJS = null;
 
     this.init = function (settings) {
-        // Init Parse account
-        Parse.initialize("M2DRuaNAnfzeQbBQubwFgfbmJJDRRbndjCCECou9", "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA");
         // Init PubSub to Node server
-        self.setupBayeuxHandlers(settings);
+        //self.setupBayeuxHandlers(settings);
 
         try {
             // Fix up for prefixing
@@ -26,6 +25,16 @@ function GhostHorseClient () {
         catch (e) {
             alert('Web Audio API is not supported in this browser');
         }
+        // init HorseJS API
+        self._horseJS = new HorseJS();
+        self._horseJS.ready(function (err, tweets) {
+            if (err) {
+                console.error('Error fetching tweets! ', err);
+                // Notify use or somethign
+            } else {
+                self._processHorseMessage({tweets: tweets});
+            }
+        });
     };
 
     this.setupBayeuxHandlers = function (settings) {     
@@ -79,7 +88,7 @@ GhostHorseClient.prototype._processHorseMessage = function (message) {
     // get list of unprocessed tweets
     if (message && message.tweets) {
         toProcess = message.tweets.filter(function (t) {
-            return !self._processed[t.id] && t.audioFile;
+            return !self._processed[t.tid] && t.audioFile;
         });
         if (toProcess.length > 0) {
             this._processTweets(toProcess);
@@ -100,12 +109,12 @@ GhostHorseClient.prototype._processTweets = function (data) {
     data.forEach(function (t) {
         var node = $('#litemplate').clone();
         var degrees = (self._tweetCount++ * 20) % 360;
-        $('a.horse', node).data('id', t.id);
+        $('a.horse', node).data('id', t.tid);
         $('p.quote', node).text(t.text.split(' ')[0]);
         node.css('-webkit-filter', 'hue-rotate(' + degrees + 'deg)');
         // only show first word? 
         $('#audio').prepend(node);
-        self._processed[t.id] = t;
+        self._processed[t.tid] = t;
     });
 };
 
