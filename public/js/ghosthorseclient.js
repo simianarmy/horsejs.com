@@ -1,6 +1,6 @@
 // EDIT THIS FOR DEVELOPMENT...SORRY!
 //
-var CONFIG_URL = 'http://horsejs.com:8000/config.json?callback=?';
+//var CONFIG_URL = 'http://horsejs.com:8000/config.json?callback=?';
 
 function GhostHorseClient () {
     if (! (this instanceof GhostHorseClient)) {
@@ -28,10 +28,6 @@ function GhostHorseClient () {
         // init HorseJS API
         self._horseJS = new HorseJS();
         self._horseJS.ready(self.horseJSHandler.bind(self));
-
-        setTimeout(function () {
-            self._horseJS.more(20, self.horseJSHandler.bind(self));
-        }, 5000);
     };
 
     this.horseJSHandler = function (err, tweets) {
@@ -68,6 +64,8 @@ function GhostHorseClient () {
             soundManager.createSound({url: '/audio/649282_SOUNDDOGS__an.mp3'}).play();
         }
     });
+    this.init();
+    /*
     jQuery.ajax({url: CONFIG_URL, 
         dataType: 'jsonp',
         jsonpCallback: 'parseConfig',
@@ -77,6 +75,7 @@ function GhostHorseClient () {
             console.error(data);
         }
     });
+    */
 }
 
 function parseConfig (data) {
