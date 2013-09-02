@@ -27,14 +27,20 @@ function GhostHorseClient () {
         }
         // init HorseJS API
         self._horseJS = new HorseJS();
-        self._horseJS.ready(function (err, tweets) {
-            if (err) {
-                console.error('Error fetching tweets! ', err);
-                // Notify use or somethign
-            } else {
-                self._processHorseMessage({tweets: tweets});
-            }
-        });
+        self._horseJS.ready(self.horseJSHandler.bind(self));
+
+        setTimeout(function () {
+            self._horseJS.more(20, self.horseJSHandler.bind(self));
+        }, 5000);
+    };
+
+    this.horseJSHandler = function (err, tweets) {
+        if (err) {
+            console.error('Error fetching tweets! ', err);
+            // Notify use or somethign
+        } else {
+            self._processHorseMessage({tweets: tweets});
+        }
     };
 
     this.setupBayeuxHandlers = function (settings) {     
