@@ -91,7 +91,7 @@ horse = (function () {
                 cfg.saddle.innerHTML = '';//"hide" link until done
                 //cfg.neigh.innerHTML = '';//boom!
 
-                cfg.corral.className = 'harras' + (Math.floor(Math.random() * (cfg.harras.max - 1)));
+                cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
 
                 cfg.tweet.audio = document.createElement('audio');
                 cfg.tweet.audio.src =  'http://horsejs.com/audio/' + cfg.tweets[cfg.count].tid + '.mp3';
