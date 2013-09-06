@@ -39,7 +39,7 @@ function GhostHorseClient () {
         }
     };
 
-    this.setupBayeuxHandlers = function (settings) {     
+    this.setupBayeuxHandlers = function (settings) {
         // Node server is on the same host:port
         var host = settings.host + ':' + settings.port;
 
@@ -66,7 +66,7 @@ function GhostHorseClient () {
     });
     this.init();
     /*
-    jQuery.ajax({url: CONFIG_URL, 
+    jQuery.ajax({url: CONFIG_URL,
         dataType: 'jsonp',
         jsonpCallback: 'parseConfig',
         contentType: "application/json",
@@ -109,7 +109,7 @@ GhostHorseClient.prototype._processTweets = function (data) {
 
     // Use this for html5 audio coolness.
     //(new BufferLoader(this._audioContext, urls, this._onAudioLoaded.bind(this))).load();
-   
+
     // Traditional html5 audio used here
     data.forEach(function (t) {
         var node = $('#litemplate').clone();
@@ -117,7 +117,7 @@ GhostHorseClient.prototype._processTweets = function (data) {
         $('a.horse', node).data('id', t.tid);
         $('p.quote', node).text(t.text.split(' ')[0]);
         node.css('-webkit-filter', 'hue-rotate(' + degrees + 'deg)');
-        // only show first word? 
+        // only show first word
         $('#audio').prepend(node);
         self._processed[t.tid] = t;
     });
@@ -165,7 +165,9 @@ GhostHorseClient.prototype._displaySpokenText = function (el, tweet, duration) {
         numWords = Math.max(words.length, 1),
         frequency = duration / (numWords + 1),
         count = 1;
-    
+
+        console.log(duration);
+
     setTimeout(function foo () {
         textEl.text(words.slice(0, count).join(' '));
         if (count++ < numWords) {
@@ -177,7 +179,7 @@ GhostHorseClient.prototype._displaySpokenText = function (el, tweet, duration) {
 GhostHorseClient.prototype._onAudioLoaded = function (bufferList) {
     var self = this;
 
-    // We have multiple audio buffers... 
+    // We have multiple audio buffers...
     bufferList.forEach(function (buffer) {
         var source = self._audioContext.createBufferSource();
         source.buffer = buffer;

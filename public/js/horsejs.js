@@ -1,3 +1,4 @@
+'use strict';
 /**
  * HorseJS API object
  */
@@ -46,9 +47,9 @@ HorseJS.prototype.more = function (count, cb) {
 };
 
 HorseJS.prototype._createQuery = function () {
-    var hjs = Parse.Object.extend(this.ParseHorseObject),
-        query = new Parse.Query(hjs);
-        
+    var hjs = window.Parse.Object.extend(this.ParseHorseObject);
+    var query = new window.Parse.Query(hjs);
+
     query.limit(this.ResultsPerQuery);
 
     return query;
