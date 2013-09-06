@@ -31,7 +31,7 @@ horse = (function () {
             method.chortle();
         },
         mane: function () {
-            if (!window.location.host.indexOf(cfg.measurements.domain) !== -1) {//we are in prod
+            if (window.location.host.indexOf(cfg.measurements.domain) !== -1) {//we are in prod
                 window._gaq = window._gaq || [];
                 window._gaq.push(['_setAccount', cfg.measurements.account]);
                 window._gaq.push(['_trackPageview']);
