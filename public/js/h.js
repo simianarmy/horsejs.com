@@ -15,6 +15,10 @@ horse = (function () {
         },
         horse: null,
         neigh: null,
+        measurements: {
+            account: 'UA-43841804-1',
+            domain: 'horsejs.com'
+        },
         saddle: null,
         tweets: {},
         tweet: {}
@@ -22,8 +26,21 @@ horse = (function () {
     var method = {
         giddyup: function () {
             cfg.horse = new HorseJS();
+            method.mane();
             method.groom();
             method.chortle();
+        },
+        mane: function () {
+            if (!window.location.host.indexOf(cfg.measurements.domain) !== -1) {//we are in prod
+                window._gaq = window._gaq || [];
+                window._gaq.push(['_setAccount', cfg.measurements.account]);
+                window._gaq.push(['_trackPageview']);
+                var g = document.createElement('script'), s = document.getElementsByTagName('script')[0];
+                g.type = 'text/javascript';
+                g.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                g.async = true;
+                s.parentNode.insertBefore(g, s);
+            }
         },
         groom: function () {
             cfg.body = document.getElementById('stallion');
