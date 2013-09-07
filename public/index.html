@@ -1,33 +1,115 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <head>
+<head>
     <title>HORSEJS.COM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" href="/css/application.css" type="text/css"/>
-    <link href='http://fonts.googleapis.com/css?family=Cutive+Mono' rel='stylesheet' type='text/css'>
-    <script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
-  </head>
-  <body>
-      <h1>HORSEJS.COM</h1>
-        <ul id="audio">
-            <li id="litemplate">
-            <a class="horse" data-id="" href="javascript:void(0);">
-                <img src="/images/horse-js.png" width="125" height="125" />
-            </a>
-            <p class="quote"></p>
-            </li>
-        </ul>
-        <!-- JavaScript plugins (requires jQuery) -->
-        <script src="http://code.jquery.com/jquery.js"></script>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
-        <script src="js/bootstrap.min.js"></script>
+    <style>
+    body, h1 {margin:0;}
+    @font-face {
+        font-family:'Bridle';
+        src: url('font/bridle.eot');
+        src: url('font/bridle.eot?#iefix') format('embedded-opentype'), url('font/bridle.woff') format('woff'), url('font/bridle.ttf') format('truetype'), url('font/bridle.svg#bridle') format('svg');
+        font-weight:normal;font-style:normal;
+    }
+    body {
+        font-family:Bridle;
+    }
+    header, article {width:90%;margin:0 auto;}
+    h1 {
+        color:#fff;
+        text-transform:uppercase;
+    }
+    footer {
+        background-image:url(images/mask.jpg);
+        background-repeat:no-repeat;
+        background-position: 50% 100%;
+        background-size:15%;
+    }
+    @media only screen and (min-width: 481px) {/*desktop*/
+        body {
+            background-image:url(/images/bg-full.jpg);
+            background-size:100%;
+            background-repeat:no-repeat;
+            background-position: 50% 0;
+        }
 
-        <script src="/js/soundmanager2-nodebug-jsmin.js"></script>
-        <script type="text/javascript" src="http://horsejs.com:8000/faye/client.js"></script>
-        <script type="text/javascript" src="/js/bufferloader.js"></script>
-        <script type="text/javascript" src="/js/horsejs.js"></script>
-        <script type="text/javascript" src="/js/ghosthorseclient.js"></script>
-  </body>
+        h1 {
+            font-size:4.0em
+        }
+
+        article div {
+            background-color:#fff;
+            position:absolute;
+            border:10px solid #fff;
+            position:absolute;
+            bottom:33%;top:10%;left:5%;right:5%;
+        }
+
+        article div div#corral {
+            border:0;
+            position:absolute;
+            bottom:0%;top:0%;left:0%;right:0%;
+            font-size:4.0em;color:#000;
+            line-height:1.7em;
+            padding:0.3em;
+            background-size:100%;
+            background-repeat:no-repeat;
+            background-position: 50% 50%;
+            opacity:0.5;
+        }
+
+
+        article div div {
+            border:0;
+            position:absolute;
+            bottom:0%;top:0%;left:0%;right:0%;
+            font-size:4.0em;color:#000;
+            line-height:1.7em;
+            padding:0.3em;
+            background-color:transparent;
+        }
+
+        .giddyup {
+            position:relative;
+            text-transform: uppercase;
+            width: 200px;
+            text-align: center;
+            font-size: 2.0em;
+            text-decoration: none;
+            margin: 0 auto;
+            display: block;
+            margin-top: 26%;
+            color:#fff;
+            text-shadow:
+                2px 2px 4px rgba(0,0,0,0.4),
+                -2px 2px 4px rgba(0,0,0,0.4),
+                2px -2px 4px rgba(0,0,0,0.4),
+                -2px -2px 4px rgba(0,0,0,0.4)
+            ;
+        }
+
+        .giddyup:hover {
+            color:#ff0;
+        }
+
+        footer {
+            position:absolute;top:74%;
+            bottom:0;left:0;right:0;
+            background-color:#fff;
+            padding-top:5%;
+            font-size:2.0em;
+            text-align:center;
+        }
+    }
+    </style>
+    <script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
+</head>
+<body id="stallion">
+<header><h1>HorseJs</h1></header>
+<article id="saddle"><div><div id="corral"></div><div id="neigh"></div></div><a id="giddyup" class="giddyup" href="#"></a></article>
+<footer>thank you <a href="http://twitter.com/horse_js">horse</a>.</footer>
+<div id="hook"></div>
+<script type="text/javascript" src="/js/horsejs.js"></script>
+<script type="text/javascript" src="/js/h.js"></script>
+</body>
 </html>

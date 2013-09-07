@@ -21,7 +21,9 @@ horse = (function () {
         },
         saddle: null,
         tweets: {},
-        tweet: {}
+        tweet: {
+          audioUrlBase: 'http://neighs.horsejs.com/audio/'
+        },
     };
     var method = {
         giddyup: function () {
@@ -94,7 +96,7 @@ horse = (function () {
                 cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
 
                 cfg.tweet.audio = document.createElement('audio');
-                cfg.tweet.audio.src =  'http://horsejs.com/audio/' + cfg.tweets[cfg.count].tid + '.mp3';
+                cfg.tweet.audio.src =  cfg.tweet.audioUrlBase + cfg.tweets[cfg.count].tid + '.mp3';
                 cfg.tweet.audio.preload = 'metadata';
 
                 cfg.tweet.audio.addEventListener('loadedmetadata', function () {
