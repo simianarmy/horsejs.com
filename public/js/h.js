@@ -24,6 +24,7 @@ horse = (function () {
         tweet: {
           audioUrlBase: 'http://neighs.horsejs.com/audio/'
         },
+        endpointRegEx: /^#\/id\/([0-9]+)$/
     };
     var method = {
         giddyup: function () {
@@ -69,11 +70,19 @@ horse = (function () {
             });
         },
         feed: function () {
-            if (cfg.count === null) {//first time so use .ready();
-                cfg.horse.ready(function (error, tweets) {method.buck(error, tweets);});
-            } else {//otherwise use .more();
-                cfg.horse.more(10,function (error, tweets) {method.buck(error, tweets);});
-            }
+          if (cfg.count === null) {//first time so use .ready();
+            cfg.horse.ready(function (error, tweets) {
+              if (method.isEndpoint()) {
+                cfg.horse.load(method.getEndpointId(), function (error, tweet) {
+                  method.buck(error, [tweet]);
+                });
+              } else {
+                method.buck(error, tweets);
+              }
+            });
+          } else {//otherwise use .more();
+            cfg.horse.more(10, method.buck.bind(method));
+          }
         },
         buck: function (error, tweets) {
             if (error) {
@@ -87,7 +96,8 @@ horse = (function () {
         },
         trot: function () {
             if (cfg.count < cfg.tweets.length) {
-
+                var tid = cfg.tweets[cfg.count].tid;
+                console.log('endpoint: ' + method.getEndpointUrl(tid));
 
                 cfg.corral.style.opacity = 0.5;
                 cfg.saddle.innerHTML = '';//"hide" link until done
@@ -96,7 +106,7 @@ horse = (function () {
                 cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
 
                 cfg.tweet.audio = document.createElement('audio');
-                cfg.tweet.audio.src =  cfg.tweet.audioUrlBase + cfg.tweets[cfg.count].tid + '.mp3';
+                cfg.tweet.audio.src =  cfg.tweet.audioUrlBase + tid + '.mp3';
                 cfg.tweet.audio.preload = 'metadata';
 
                 cfg.tweet.audio.addEventListener('loadedmetadata', function () {
@@ -145,6 +155,16 @@ horse = (function () {
                 method.trot();
                 e.stopPropagation();
             };
+        },
+        isEndpoint: function () {
+          return cfg.endpointRegEx.test(window.location.hash);
+        },
+        getEndpointId: function () {
+          var res = cfg.endpointRegEx.exec(window.location.hash);
+          return res[1];
+        },
+        getEndpointUrl: function (id) {
+          return window.location.host + '/#/id/' + id;
         }
     };
     var api    = {

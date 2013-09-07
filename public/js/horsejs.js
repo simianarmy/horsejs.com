@@ -51,6 +51,33 @@ HorseJS.prototype.more = function (count, cb) {
 };
 
 /**
+ * Fetches specific item by id
+ * @param {Number|String} id
+ * @param {Function} cb
+ */
+HorseJS.prototype.load = function (id, cb) {
+    var query = this._createQuery();
+
+    query.equalTo(this.RandomQueryKey, id);
+    query.first({
+        success: function (results) {
+          if (typeof results === 'undefined') {
+            cb('Not found');
+          } else {
+            cb(null, results.attributes);
+          }
+        },
+        error: function (error) {
+            cb(error);
+        }
+    });
+};
+
+HorseJS.prototype.getEndpoint = function (id) {
+  return '#/id/' + id;
+};
+
+/**
  * Fetches random item
  * XXX Parse will only return 100 results, so that is going to be the random
  * pool for now
@@ -113,15 +140,6 @@ HorseJS.prototype._query = function (query, cb) {
 
 HorseJS.prototype._pickRandom = function (cb) {
     var id = this._randCache[Math.floor(Math.random() * this._randCache.length)];
-    var query = this._createQuery();
 
-    query.equalTo(this.RandomQueryKey, id);
-    query.first({
-        success: function (results) {
-            cb(null, results.attributes);
-        },
-        error: function (error) {
-            cb(error);
-        }
-    });
+    this.load(id, cb);
 };
