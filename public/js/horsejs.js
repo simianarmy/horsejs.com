@@ -9,7 +9,9 @@ function HorseJS (stuff) {
     this.PARSE_JS_KEY = "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA";
     this.ParseHorseObject = 'HorseTweet';
     this.ResultsPerQuery = 10;
+    this.RandomQueryKey = 'tid';
     this._lastID = null;
+    this._randCache = [];
 
     // Init Parse account
     Parse.initialize(this.PARSE_APP_ID, this.PARSE_JS_KEY);
@@ -23,7 +25,9 @@ HorseJS.prototype.ready = function (cb) {
     // Query for first N tweets to return
     var query = this._createQuery();
 
+    query.limit(1);
     query.descending('tid');
+
     this._query(query, cb);
 };
 
@@ -34,23 +38,47 @@ HorseJS.prototype.ready = function (cb) {
  * @param {Function} cb
  */
 HorseJS.prototype.more = function (count, cb) {
-    var query = this._createQuery();
+    var query = this._createQuery(),
+        limit = count || this.ResultsPerQuery;
 
     query.descending('tid');
-    if (count > 0) {
-        query.limit(count);
-    }
+    query.limit(limit);
+
     if (this._lastID !== null) {
         query.lessThan('tid', this._lastID);
     }
     this._query(query, cb);
 };
 
+/**
+ * Fetches random item
+ * XXX Parse will only return 100 results, so that is going to be the random
+ * pool for now
+ * @param {Function} cb
+ */
+HorseJS.prototype.random = function (cb) {
+    var self = this;
+
+    // Check cache first
+    if (this._randCache.length === 0) {
+        // populate cache with object ids
+        var query = this._createQuery();
+        query.select(this.RandomQueryKey);
+        query.find().then(function(results) {
+          // each of results will only have the selected fields available.
+          self._randCache = results.map(function(r) {
+            return r.attributes[self.RandomQueryKey];
+          });
+          self._pickRandom(cb);
+        });
+    } else {
+        self._pickRandom(cb);
+    }
+};
+
 HorseJS.prototype._createQuery = function () {
     var hjs = window.Parse.Object.extend(this.ParseHorseObject);
     var query = new window.Parse.Query(hjs);
-
-    query.limit(this.ResultsPerQuery);
 
     return query;
 };
@@ -78,6 +106,21 @@ HorseJS.prototype._query = function (query, cb) {
         error: function(error) {
             // The object was not retrieved successfully.
             // error is a Parse.Error with an error code and description.
+            cb(error);
+        }
+    });
+};
+
+HorseJS.prototype._pickRandom = function (cb) {
+    var id = this._randCache[Math.floor(Math.random() * this._randCache.length)];
+    var query = this._createQuery();
+
+    query.equalTo(this.RandomQueryKey, id);
+    query.first({
+        success: function (results) {
+            cb(null, results.attributes);
+        },
+        error: function (error) {
             cb(error);
         }
     });
