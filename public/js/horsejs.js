@@ -5,13 +5,15 @@
 
 
 function HorseJS (stuff) {
+    stuff = stuff || {};
+
     this.PARSE_APP_ID = "M2DRuaNAnfzeQbBQubwFgfbmJJDRRbndjCCECou9";
     this.PARSE_JS_KEY = "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA";
     this.ParseHorseObject = 'HorseTweet';
-    this.ResultsPerQuery = 10;
     this.RandomQueryKey = 'tid';
     this._lastID = null;
     this._randCache = [];
+    this._resultsPerQuery = stuff.limit || 10;
 
     // Init Parse account
     Parse.initialize(this.PARSE_APP_ID, this.PARSE_JS_KEY);
@@ -19,16 +21,21 @@ function HorseJS (stuff) {
 
 /**
  * Call to hook int ready event
+ * @param {String|Number} optId optional id to load
  * @param {Function} cb
  */
-HorseJS.prototype.ready = function (cb) {
+HorseJS.prototype.ready = function (optId, cb) {
     // Query for first N tweets to return
     var query = this._createQuery();
 
-    query.limit(1);
-    query.descending('tid');
+    if (optId) {
+      this.load(optId, cb);
+    } else {
+      query.limit(this._resultsPerQuery);
+      query.descending('tid');
 
-    this._query(query, cb);
+      this._query(query, cb);
+    }
 };
 
 /**
@@ -39,7 +46,7 @@ HorseJS.prototype.ready = function (cb) {
  */
 HorseJS.prototype.more = function (count, cb) {
     var query = this._createQuery(),
-        limit = count || this.ResultsPerQuery;
+        limit = count || this._resultsPerQuery;
 
     query.descending('tid');
     query.limit(limit);
@@ -64,7 +71,7 @@ HorseJS.prototype.load = function (id, cb) {
           if (typeof results === 'undefined') {
             cb('Not found');
           } else {
-            cb(null, results.attributes);
+            cb(null, [results.attributes]);
           }
         },
         error: function (error) {
@@ -74,7 +81,6 @@ HorseJS.prototype.load = function (id, cb) {
 };
 
 HorseJS.prototype.getEndpoint = function (id) {
-  return '#/id/' + id;
 };
 
 /**

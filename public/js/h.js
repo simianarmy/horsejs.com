@@ -70,19 +70,15 @@ horse = (function () {
             });
         },
         feed: function () {
-          if (cfg.count === null) {//first time so use .ready();
-            cfg.horse.ready(function (error, tweets) {
-              if (method.isEndpoint()) {
-                cfg.horse.load(method.getEndpointId(), function (error, tweet) {
-                  method.buck(error, [tweet]);
+            if (cfg.count === null) {//first time so use .ready();
+                var id = method.getEndpointId();
+
+                cfg.horse.ready(id, function (error, tweets) {
+                    method.buck(error, tweets);
                 });
-              } else {
-                method.buck(error, tweets);
-              }
-            });
-          } else {//otherwise use .more();
-            cfg.horse.more(10, method.buck.bind(method));
-          }
+            } else {//otherwise use .more();
+                cfg.horse.more(10, method.buck.bind(method));
+            }
         },
         buck: function (error, tweets) {
             if (error) {
@@ -157,14 +153,14 @@ horse = (function () {
             };
         },
         isEndpoint: function () {
-          return cfg.endpointRegEx.test(window.location.hash);
+            return cfg.endpointRegEx.test(window.location.hash);
         },
         getEndpointId: function () {
-          var res = cfg.endpointRegEx.exec(window.location.hash);
-          return res[1];
+            var res = cfg.endpointRegEx.exec(window.location.hash);
+            return res ? res[1] : null;
         },
         getEndpointUrl: function (id) {
-          return window.location.host + '/#/id/' + id;
+            return window.location.host + '/#/id/' + id;
         }
     };
     var api    = {
