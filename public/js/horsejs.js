@@ -63,16 +63,18 @@ HorseJS.prototype.more = function (count, cb) {
  * @param {Function} cb
  */
 HorseJS.prototype.load = function (id, cb) {
+    var self = this;
     var query = this._createQuery();
 
     query.equalTo(this.RandomQueryKey, id);
     query.first({
         success: function (results) {
-          if (typeof results === 'undefined') {
-            cb('Not found');
-          } else {
-            cb(null, [results.attributes]);
-          }
+            if (typeof results === 'undefined') {
+                cb('Not found');
+            } else {
+                self._lastID = results.attributes.tid;
+                cb(null, [results.attributes]);
+            }
         },
         error: function (error) {
             cb(error);
