@@ -1,6 +1,20 @@
+<!--           ,
+              / \,,_  .'|
+           ,{{| /}}}}/_.'
+          }}}}` '{{'  '.
+        {{{{{    _   ;, \
+     ,}}}}}}    /o`\  ` ;)
+    {{{{{{   /           (
+    }}}}}}   |            \
+   {{{{{{{{   \            \
+   }}}}}}}}}   '.__      _  |
+   {{{{{{{{       /`._  (_\ /
+    }}}}}}'      |    //___/
+    `{{{{`       |     '__'
+     }}}`                         -->
 <!doctype html>
 <html>
-<head>
+<head id="heady">
     <title>HORSEJS.COM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -14,7 +28,11 @@
     body {
         font-family:Bridle;
     }
-    header, article {width:90%;margin:0 auto;}
+    header, article {
+        width:90%;margin:0 auto;
+
+    }
+    article div {}
     h1 {
         color:#fff;
         text-transform:uppercase;
@@ -34,7 +52,12 @@
         }
 
         h1 {
-            font-size:4.0em
+            font-size:4.0em;
+        }
+
+        .twitter-share-button {
+            position:absolute;
+            top:3.3%;right:2%;
         }
 
         article div {
@@ -77,7 +100,10 @@
             font-size: 2.0em;
             text-decoration: none;
             margin: 0 auto;
-            display: block;
+            display:none;
+            font-family:Bridle;
+            background:none;
+            border:0;
             margin-top: 26%;
             color:#fff;
             text-shadow:
@@ -105,10 +131,13 @@
     <script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
 </head>
 <body id="stallion">
-<header><h1>HorseJs</h1></header>
-<article id="saddle"><div><div id="corral"></div><div id="neigh"></div></div><a id="giddyup" class="giddyup" href="#"></a></article>
+<header>
+    <h1>HorseJs</h1>
+    <span id="twitterHookLink"></span>
+</header>
+<article id="saddle"><div><div id="corral"></div><div id="neigh"></div></div><button id="giddyup" class="giddyup" >GiddyUp &#187;</button></article>
 <footer>thank you <a href="http://twitter.com/horse_js">horse</a>.</footer>
-<div id="hook"></div>
+<div id="hook"></div><div id="twat"></div>
 <script type="text/javascript" src="/js/horsejs.js"></script>
 <script type="text/javascript" src="/js/h.js"></script>
 </body>

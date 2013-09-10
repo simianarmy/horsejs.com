@@ -24,7 +24,15 @@ horse = (function () {
         tweet: {
           audioUrlBase: 'http://neighs.horsejs.com/audio/'
         },
-        endpointRegEx: /^#\/id\/([0-9]+)$/
+        endpointRegEx: /^#\/id\/([0-9]+)$/,
+        share: {
+            hook: {
+                link: null,
+                script: null
+            },
+            link1: '<a id="sharey" style="display:none;" href="https://twitter.com/share" class="twitter-share-button" data-url="',
+            link2: '" data-text="Listen to the horse:" data-via="horse_js" data-size="large" data-related="folktrash" data-hashtags="horseSays">Tweet</a>'
+        }
     };
     var method = {
         giddyup: function () {
@@ -51,6 +59,10 @@ horse = (function () {
             cfg.saddle = document.getElementById('giddyup');
             cfg.corral = document.getElementById('corral');
             cfg.harras.hook = document.getElementById('hook');
+            cfg.share.hook = document.getElementById('twat');
+            cfg.share.hack = document.getElementById('twit');
+            cfg.share.hook.script = document.getElementById('heady');
+            cfg.share.hook.link = document.getElementById('twitterHookLink');
 
             var i;
             cfg.harras.style = '<style>';
@@ -72,7 +84,6 @@ horse = (function () {
         feed: function () {
             if (cfg.count === null) {//first time so use .ready();
                 var id = method.getEndpointId();
-
                 cfg.horse.ready(id, function (error, tweets) {
                     method.buck(error, tweets);
                 });
@@ -93,10 +104,14 @@ horse = (function () {
         trot: function () {
             if (cfg.count < cfg.tweets.length) {
                 var tid = cfg.tweets[cfg.count].tid;
-                console.log('endpoint: ' + method.getEndpointUrl(tid));
+
+                console.log('getEndpointUrl: ' + method.getEndpointUrl(tid));
+                method.appendEndpointUrl(tid);
+
 
                 cfg.corral.style.opacity = 0.5;
-                cfg.saddle.innerHTML = '';//"hide" link until done
+                //cfg.saddle.innerHTML = '';//"hide" link until done
+                cfg.saddle.style.display = 'none';
                 //cfg.neigh.innerHTML = '';//boom!
 
                 cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
@@ -146,11 +161,31 @@ horse = (function () {
         reigns: function () {
             cfg.corral.style.opacity = 1;
             cfg.neigh.innerHTML = '';//boom!
-            cfg.saddle.innerHTML = 'GiddyUp &#187;';//make visible
+            cfg.saddle.style.display = 'block';
+            method.insertShare();
             cfg.saddle.onclick = function (e) {
+                method.clearShare();
                 method.trot();
                 e.stopPropagation();
             };
+        },
+        insertShare: function () {
+
+            var thing = cfg.share.link1 + window.location.href + cfg.share.link2;
+            cfg.share.hook.link.innerHTML = thing;
+
+            var script = document.createElement('script');
+            script.id = 'twitty';
+            script.type= 'text/javascript';
+            script.src= 'http://platform.twitter.com/widgets.js';
+            script.async = true;
+            cfg.share.hook.script.appendChild(script);
+
+            console.log('that work?');
+        },
+        clearShare: function () {
+            cfg.share.hook.link.innerHTML = '';
+            document.getElementById('twitty').remove();
         },
         isEndpoint: function () {
             return cfg.endpointRegEx.test(window.location.hash);
@@ -161,6 +196,12 @@ horse = (function () {
         },
         getEndpointUrl: function (id) {
             return window.location.host + '/#/id/' + id;
+        },
+        appendEndpointUrl: function (id) {
+            console.log('/id/' + id);
+            console.log(window.location);
+            window.location.hash = '/id/' + id;
+            console.log(window.location);
         }
     };
     var api    = {
