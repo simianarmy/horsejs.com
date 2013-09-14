@@ -32,14 +32,14 @@ horse = (function () {
             },
             link1: '<a id="sharey" style="display:none;" href="https://twitter.com/share" class="twitter-share-button" data-url="',
             link2: '" data-text="Listen to the horse:" data-via="horse_js" data-size="large" data-related="folktrash" data-hashtags="horseSays">Tweet</a>'
-        }
+        },
+        isIOS: (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) ? true : false
     };
     var method = {
         giddyup: function () {
             cfg.horse = new HorseJS();
             method.mane();
             method.groom();
-            method.chortle();
         },
         mane: function () {
             if (window.location.host.indexOf(cfg.measurements.domain) !== -1) {//we are in prod
@@ -71,13 +71,29 @@ horse = (function () {
             }
             cfg.harras.style += '</style>';
             cfg.harras.hook.innerHTML = cfg.harras.style;
+
+            soundManager.setup({
+                url: '/swf',
+                flashVersion: 9, // optional: shiny features (default = 8)
+                // optional: ignore Flash where possible, use 100% HTML5 mode
+                preferFlash: false,
+                onready: function() {
+                    // Ready to use; soundManager.createSound() etc. can now be called.
+                    // mobile browsers require user click before playing audio
+                    if (method.isMobile()) {
+                        method.feed();
+                    } else {
+                        method.chortle();
+                    }
+                }
+            });
         },
         chortle: function () {
-            cfg.chortle = document.createElement('audio');
-            cfg.chortle.src = 'chortle.mp3';
-            cfg.chortle.play();
-            cfg.chortle.addEventListener('ended', function () {
-                cfg.chortle = null;
+            var chortle = document.createElement('audio');
+            chortle.src = 'chortle.mp3';
+            chortle.play();
+            chortle.addEventListener('ended', function () {
+                chortle = null;
                 method.feed();
             });
         },
@@ -98,58 +114,45 @@ horse = (function () {
                 console.log(tweets);
                 cfg.tweets = tweets;
                 cfg.count = 0;
-                method.trot();
+
+                // After Ajax response, we have to initiate a user click to be
+                // able to play any audio
+                if (this.isMobile()) {
+                    method.giddyUp();
+                } else {
+                    method.trot();
+                }
             }
         },
         trot: function () {
             if (cfg.count < cfg.tweets.length) {
-                var tid = cfg.tweets[cfg.count].tid;
+                var tweet = cfg.tweets[cfg.count],
+                    tid = tweet.tid;
 
                 console.log('getEndpointUrl: ' + method.getEndpointUrl(tid));
                 method.appendEndpointUrl(tid);
 
-
                 cfg.corral.style.opacity = 0.5;
-                //cfg.saddle.innerHTML = '';//"hide" link until done
                 cfg.saddle.style.display = 'none';
-                //cfg.neigh.innerHTML = '';//boom!
-
                 cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
 
-                cfg.tweet.audio = document.createElement('audio');
-                cfg.tweet.audio.src =  cfg.tweet.audioUrlBase + tid + '.mp3';
-                cfg.tweet.audio.preload = 'metadata';
-
-                cfg.tweet.audio.addEventListener('loadedmetadata', function () {
-                    cfg.duration = cfg.tweet.audio.duration;
-                    cfg.tweet.audio.play();
-                    method.rearing();
-                    cfg.count++;
-                });
-
-                cfg.tweet.audio.addEventListener('ended', function () {
-                    cfg.tweet.audio = null;
-                    setTimeout(function () {
-                        method.reigns();
-                    },1000);
-                });
-
+                method.whinny(tweet);
             } else {
                 console.log('send more apples');
                 method.feed();
             }
         },
-        rearing: function () {
+        /**
+         * @param {Number} duration length of audio in milliseconds
+         */
+        rearing: function (duration) {
 
             var snorts = cfg.tweets[cfg.count].text.split(' ');
             var bale = Math.max(snorts.length, 1);
-            var gallop = cfg.duration * 1000 / (bale + 1);
+            var gallop = duration / (bale + 1);
             var count = 1;
 
             console.log(snorts);
-            console.log('bale: ' + bale);
-            console.log('gallop: ' + gallop);
-            console.log('count: ' + count);
 
             setTimeout(function canter() {
                 cfg.neigh.innerHTML = snorts.slice(0, count).join(' ');
@@ -158,16 +161,63 @@ horse = (function () {
                 }
             }, gallop);
         },
-        reigns: function () {
+        giddyUp: function () {
             cfg.corral.style.opacity = 1;
             cfg.neigh.innerHTML = '';//boom!
             cfg.saddle.style.display = 'block';
-            method.insertShare();
             cfg.saddle.onclick = function (e) {
                 method.clearShare();
                 method.trot();
                 e.stopPropagation();
             };
+        },
+        reigns: function () {
+            method.insertShare();
+
+            // If we need more tweets, we have to fetch them before showing the 
+            // giddyup link (for mobile audio)
+            if (this.isMobile() && (cfg.count >= cfg.tweets.length)) {
+                method.feed();
+            } else {
+                method.giddyUp();
+            }
+        },
+        whinny: function (tweet) {
+            soundManager.createSound({
+               id: tweet.tid,
+               url: method.getTweetAudioUrl(tweet),
+               onload: function () {
+                   method.rearing(this.duration || this.durationEstimate);
+                   cfg.count++;
+               },
+               onfinish: function () {
+                   setTimeout(function () {
+                       method.reigns();
+                   }, 1000);
+               }
+            }).play();
+
+            /*
+            // This totally failed on iOS, even after a user click :(
+            var audio = document.createElement('audio');
+            audio.src = method.getTweetAudioUrl(tweet); 
+            audio.preload = 'metadata';
+
+            audio.addEventListener('loadedmetadata', function () {
+                cfg.duration = audio.duration;
+                audio.play();
+                method.rearing();
+                cfg.count++;
+            });
+
+            audio.addEventListener('ended', function () {
+                audio = null;
+                setTimeout(function () {
+                    method.reigns();
+                },1000);
+            });
+            */
+
         },
         insertShare: function () {
 
@@ -184,8 +234,19 @@ horse = (function () {
             console.log('that work?');
         },
         clearShare: function () {
+            var twitty = document.getElementById('twitty');
+
             cfg.share.hook.link.innerHTML = '';
-            document.getElementById('twitty').remove();
+            if (twitty) {
+                twitty.parentNode.removeChild(twitty);
+            }
+        },
+        /**
+         * @param {Object} t tweet data
+         * @return {String} url to tweet audio file
+         */
+        getTweetAudioUrl: function (t) {
+            return cfg.tweet.audioUrlBase + t.tid + '.mp3';
         },
         isEndpoint: function () {
             return cfg.endpointRegEx.test(window.location.hash);
@@ -198,10 +259,13 @@ horse = (function () {
             return window.location.host + '/#/id/' + id;
         },
         appendEndpointUrl: function (id) {
-            console.log('/id/' + id);
-            console.log(window.location);
-            window.location.hash = '/id/' + id;
-            console.log(window.location);
+            if (!cfg.isIOS) {
+                window.location.hash = '/id/' + id;
+                console.log(window.location);
+            }
+        },
+        isMobile: function () {
+            return cfg.isIOS;
         }
     };
     var api    = {
