@@ -3,12 +3,12 @@
  * HorseJS API object
  */
 
+var Parse = require('parse').Parse
+, config = require('../../config/AppConfig')
 
 function HorseJS (stuff) {
     stuff = stuff || {};
 
-    this.PARSE_APP_ID = "M2DRuaNAnfzeQbBQubwFgfbmJJDRRbndjCCECou9";
-    this.PARSE_JS_KEY = "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA";
     this.ParseHorseObject = 'HorseTweet';
     this.RandomQueryKey = 'tid';
     this._lastID = null;
@@ -16,7 +16,7 @@ function HorseJS (stuff) {
     this._resultsPerQuery = stuff.limit || 10;
 
     // Init Parse account
-    Parse.initialize(this.PARSE_APP_ID, this.PARSE_JS_KEY);
+    Parse.initialize(config.Parse.appId, config.Parse.restKey);
 };
 
 /**
@@ -151,3 +151,5 @@ HorseJS.prototype._pickRandom = function (cb) {
 
     this.load(id, cb);
 };
+
+module.exports = HorseJS;

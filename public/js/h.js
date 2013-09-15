@@ -1,7 +1,8 @@
 'use strict';
-var horse = window.horse || {};
 
-horse = (function () {
+var HorseJS = require('./HorseJS');
+
+var horse = (function () {
     var cfg = {
         body: null,
         chortle: null,
@@ -33,25 +34,13 @@ horse = (function () {
             link1: '<a id="sharey" style="display:none;" href="https://twitter.com/share" class="twitter-share-button" data-url="',
             link2: '" data-text="Listen to the horse:" data-via="horse_js" data-size="large" data-related="folktrash" data-hashtags="horseSays">Tweet</a>'
         },
-        isIOS: (navigator.userAgent.match(/(iPad|iPhone|iPod)/g)) ? true : false
+        isIOS: false
     };
     var method = {
-        giddyup: function () {
+        giddyup: function (req) {
+            cfg.isIOS = method.isIOS(req);
             cfg.horse = new HorseJS();
-            method.mane();
             method.groom();
-        },
-        mane: function () {
-            if (window.location.host.indexOf(cfg.measurements.domain) !== -1) {//we are in prod
-                window._gaq = window._gaq || [];
-                window._gaq.push(['_setAccount', cfg.measurements.account]);
-                window._gaq.push(['_trackPageview']);
-                var g = document.createElement('script'), s = document.getElementsByTagName('script')[0];
-                g.type = 'text/javascript';
-                g.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                g.async = true;
-                s.parentNode.insertBefore(g, s);
-            }
         },
         groom: function () {
             cfg.body = document.getElementById('stallion');
@@ -259,13 +248,16 @@ horse = (function () {
             return window.location.host + '/#/id/' + id;
         },
         appendEndpointUrl: function (id) {
-            if (!cfg.isIOS) {
+            if (!method.isMobile()) {
                 window.location.hash = '/id/' + id;
                 console.log(window.location);
             }
         },
         isMobile: function () {
             return cfg.isIOS;
+        },
+        isIOS: function (req) {
+            return (req.headers['user-agent'].match(/(iPad|iPhone|iPod)/g)) ? true : false;
         }
     };
     var api    = {
@@ -278,4 +270,4 @@ horse = (function () {
     return api;
 })();
 
-horse.giddyup();
+module.exports = horse;
