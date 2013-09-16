@@ -133,11 +133,15 @@
 <body id="stallion">
 <header>
     <h1>HorseJs</h1>
+    <% if (!user) { %>
+        <p>
+            <a id="signin" href="/signin_with_twitter">Sign In</a>
+        </p>
+    <% } else { %>
+        Welcome back, <%= user.screen_name %>
+    <% } %>
     <span id="twitterHookLink"></span>
 </header>
-<p>
-    <a id='signin' href="javascript:void(0);">Sign In</a>
-</p>
 <article id="saddle"><div><div id="corral"></div><div id="neigh"></div></div><button id="giddyup" class="giddyup" >GiddyUp &#187;</button></article>
 <footer>thank you <a href="http://twitter.com/horse_js">horse</a>.</footer>
 <div id="hook"></div><div id="twat"></div>

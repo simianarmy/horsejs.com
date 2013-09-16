@@ -2,12 +2,13 @@
  * node express app
  */
 var express = require('express')
+, partials = require('express-partials')
 , http = require('http')
 , path = require('path')
 , ntwitter = require('ntwitter')
 , url = require('url')
-, config = require('./config/AppConfig')
-, horsejs = require('./public/js/h');
+, config = require('./config/AppConfig');
+//, horsejs = require('./libs/h');
 
 var app = express();
 
@@ -23,6 +24,7 @@ app.configure(function(){
     app.use(express.session());
     app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(partials());
 });
 
 app.configure('development', function(){
@@ -33,8 +35,8 @@ app.configure('development', function(){
  * Above this line are Express Defaults.
  */
 app.get('/', function(req, res) {
-    horsejs.giddyup(req);
-//  res.render('index', { user: app.locals.user || '' } )
+    //horsejs.giddyup(app, req);
+    res.render('index', { user: app.locals.user || false });
 });
 
 //app.get('/foo', routes.index);
