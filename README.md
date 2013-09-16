@@ -1,4 +1,4 @@
 horsejs.com
 ===========
 
-The unofficial @horse_js speaker
+The unofficial @horse_js whisperer.
