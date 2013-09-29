@@ -8,7 +8,6 @@ var express = require('express')
 , ntwitter = require('ntwitter')
 , url = require('url')
 , config = require('./config/AppConfig');
-//, horsejs = require('./libs/h');
 
 var app = express();
 
@@ -36,7 +35,7 @@ app.configure('development', function(){
  */
 app.get('/', function(req, res) {
     //horsejs.giddyup(app, req);
-    res.render('index', { user: app.locals.user || false });
+    res.render('index', { tid: null, user: app.locals.user || false });
 });
 
 //app.get('/foo', routes.index);
@@ -80,6 +79,16 @@ app.get('/twitter_callback', function(req, res){
             res.writeHead(302, {'Location': '/'});
             res.end();
         })
+    });
+});
+
+/**
+ * Render a bookmarked tweet
+ */
+app.get('/id/:tid', function (req, res) {
+    res.render('index', { 
+        user: app.locals.user || false,
+        tid: req.params.tid
     });
 });
 

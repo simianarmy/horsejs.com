@@ -5,7 +5,7 @@ horse = (function () {
     var cfg = {
         body: null,
         chortle: null,
-        count: null,
+        currentIndex: null,
         corral: null,
         duration: null,
         harras: {
@@ -20,7 +20,7 @@ horse = (function () {
             domain: 'horsejs.com'
         },
         saddle: null,
-        tweets: {},
+        tweets: [],
         tweet: {
           audioUrlBase: 'http://neighs.horsejs.com/audio/'
         },
@@ -54,6 +54,8 @@ horse = (function () {
             }
         },
         groom: function () {
+            var self = this;
+
             cfg.body = document.getElementById('stallion');
             cfg.neigh = document.getElementById('neigh');
             cfg.saddle = document.getElementById('giddyup');
@@ -67,11 +69,19 @@ horse = (function () {
             var i;
             cfg.harras.style = '<style>';
             for (i=1;i<=cfg.harras.max;i++) {
-                cfg.harras.style += '.harras' + i + ' {background-image:url(images/harras/' + i + '.jpg);}';
+                cfg.harras.style += '.harras' + i + ' {background-image:url(/images/harras/' + i + '.jpg);}';
             }
             cfg.harras.style += '</style>';
             cfg.harras.hook.innerHTML = cfg.harras.style;
 
+            // Add history listener
+            window.addEventListener("popstate", function(e) {
+                if (e.state && e.state.tid) {
+                    console.log('loading state', e);
+                    self.trot(e.state.tid);
+                }
+            });
+            
             soundManager.setup({
                 url: '/swf',
                 flashVersion: 9, // optional: shiny features (default = 8)
@@ -90,7 +100,7 @@ horse = (function () {
         },
         chortle: function () {
             var chortle = document.createElement('audio');
-            chortle.src = 'chortle.mp3';
+            chortle.src = '/chortle.mp3';
             chortle.play();
             chortle.addEventListener('ended', function () {
                 chortle = null;
@@ -98,7 +108,7 @@ horse = (function () {
             });
         },
         feed: function () {
-            if (cfg.count === null) {//first time so use .ready();
+            if (cfg.currentIndex === null) {//first time so use .ready();
                 var id = method.getEndpointId();
                 cfg.horse.ready(id, function (error, tweets) {
                     method.buck(error, tweets);
@@ -112,8 +122,12 @@ horse = (function () {
                 console.log('no apples');
             } else {
                 console.log(tweets);
-                cfg.tweets = tweets;
-                cfg.count = 0;
+                // append to list or initialize
+                cfg.tweets = cfg.tweets.concat(tweets);
+
+                if (cfg.tweets.length === tweets.length) {
+                    cfg.currentIndex = 0;
+                }
 
                 // After Ajax response, we have to initiate a user click to be
                 // able to play any audio
@@ -124,14 +138,33 @@ horse = (function () {
                 }
             }
         },
-        trot: function () {
-            if (cfg.count < cfg.tweets.length) {
-                var tweet = cfg.tweets[cfg.count],
-                    tid = tweet.tid;
+        trot: function (optTid) {
+            var tweet, tid;
 
-                console.log('getEndpointUrl: ' + method.getEndpointUrl(tid));
+            // Did we come from a history nav?
+            if (optTid) {
+                tid = optTid;
+                // find the matching tweet object
+                for (var i =0; i < cfg.tweets.length; i++) {
+                    if (tid === cfg.tweets[i].tid) {
+                        // save position
+                        cfg.currentIndex = i;
+                        tweet = cfg.tweets[i];
+                        break;
+                    }
+                };
+                if (!tweet) {
+                    console.warn('could not find tweet associated with id ', tid);
+                    return;
+                }
+            }
+            else if (cfg.currentIndex < cfg.tweets.length) {
+                tweet = cfg.tweets[cfg.currentIndex];
+                tid = tweet.tid;
+                // add the state if we're not coming from history api
                 method.appendEndpointUrl(tid);
-
+            }
+            if (tid) {
                 cfg.corral.style.opacity = 0.5;
                 cfg.saddle.style.display = 'none';
                 cfg.corral.className = 'harras' + (Math.floor(Math.random() * cfg.harras.max + 1));
@@ -147,7 +180,7 @@ horse = (function () {
          */
         rearing: function (duration) {
 
-            var snorts = cfg.tweets[cfg.count].text.split(' ');
+            var snorts = cfg.tweets[cfg.currentIndex].text.split(' ');
             var bale = Math.max(snorts.length, 1);
             var gallop = duration / (bale + 1);
             var count = 1;
@@ -174,28 +207,37 @@ horse = (function () {
         reigns: function () {
             method.insertShare();
 
+            cfg.currentIndex++;
+            console.log('index at ' + cfg.currentIndex);
             // If we need more tweets, we have to fetch them before showing the 
             // giddyup link (for mobile audio)
-            if (this.isMobile() && (cfg.count >= cfg.tweets.length)) {
+            if (this.isMobile() && (cfg.currentIndex >= cfg.tweets.length)) {
                 method.feed();
             } else {
                 method.giddyUp();
             }
         },
         whinny: function (tweet) {
-            soundManager.createSound({
-               id: tweet.tid,
-               url: method.getTweetAudioUrl(tweet),
-               onload: function () {
-                   method.rearing(this.duration || this.durationEstimate);
-                   cfg.count++;
-               },
-               onfinish: function () {
-                   setTimeout(function () {
-                       method.reigns();
-                   }, 1000);
-               }
-            }).play();
+            // look for existing sound
+            var sound = soundManager.getSoundById(tweet.tid);
+
+            if (sound) {
+                sound.play();
+                method.rearing(sound.duration);
+            } else {
+                soundManager.createSound({
+                   id: tweet.tid,
+                   url: method.getTweetAudioUrl(tweet),
+                   onload: function () {
+                       method.rearing(this.duration || this.durationEstimate);
+                   },
+                   onfinish: function () {
+                       setTimeout(function () {
+                           method.reigns();
+                       }, 1000);
+                   }
+                }).play();
+            }
 
             /*
             // This totally failed on iOS, even after a user click :(
@@ -207,7 +249,7 @@ horse = (function () {
                 cfg.duration = audio.duration;
                 audio.play();
                 method.rearing();
-                cfg.count++;
+                cfg.currentIndex++;
             });
 
             audio.addEventListener('ended', function () {
@@ -249,20 +291,16 @@ horse = (function () {
             return cfg.tweet.audioUrlBase + t.tid + '.mp3';
         },
         isEndpoint: function () {
-            return cfg.endpointRegEx.test(window.location.hash);
+            return typeof window.tid !== 'undefined';
         },
         getEndpointId: function () {
-            var res = cfg.endpointRegEx.exec(window.location.hash);
-            return res ? res[1] : null;
+            return window.tid;
         },
         getEndpointUrl: function (id) {
-            return window.location.host + '/#/id/' + id;
+            return window.location.host + '/id/' + id;
         },
         appendEndpointUrl: function (id) {
-            if (!cfg.isIOS) {
-                window.location.hash = '/id/' + id;
-                console.log(window.location);
-            }
+            window.history.pushState({tid: id}, null, '/id/' + id);
         },
         isMobile: function () {
             return cfg.isIOS;

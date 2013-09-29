@@ -21,8 +21,8 @@
     body, h1 {margin:0;}
     @font-face {
         font-family:'Bridle';
-        src: url('font/bridle.eot');
-        src: url('font/bridle.eot?#iefix') format('embedded-opentype'), url('font/bridle.woff') format('woff'), url('font/bridle.ttf') format('truetype'), url('font/bridle.svg#bridle') format('svg');
+        src: url('/font/bridle.eot');
+        src: url('/font/bridle.eot?#iefix') format('embedded-opentype'), url('/font/bridle.woff') format('woff'), url('/font/bridle.ttf') format('truetype'), url('/font/bridle.svg#bridle') format('svg');
         font-weight:normal;font-style:normal;
     }
     body {
@@ -38,7 +38,7 @@
         text-transform:uppercase;
     }
     footer {
-        background-image:url(images/mask.jpg);
+        background-image:url(/images/mask.jpg);
         background-repeat:no-repeat;
         background-position: 50% 100%;
         background-size:15%;
@@ -129,15 +129,20 @@
     }
     </style>
     <script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
+    <script>
+    <% if (tid) { %>
+        window.tid = '<%= tid %>';
+    <% } %>
+    </script>
 </head>
 <body id="stallion">
 <header>
     <h1>HorseJs</h1>
-    <% if (!user) { %>
+    <% if (false && !user) { %>
         <p>
             <a id="signin" href="/signin_with_twitter">Sign In</a>
         </p>
-    <% } else { %>
+    <% } else if (false) { %>
         Welcome back, <%= user.screen_name %>
     <% } %>
     <span id="twitterHookLink"></span>
