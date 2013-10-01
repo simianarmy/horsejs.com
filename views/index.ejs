@@ -127,6 +127,110 @@
             text-align:center;
         }
     }
+    @media only screen and (min-device-width : 320px) and (max-device-width : 568px) {/*iphone5*/
+        body {
+            background-image:url(/images/bg-full.jpg);
+            background-size:100%;
+            background-repeat:no-repeat;
+            background-position: 50% 0;
+        }
+
+        h1 {
+            font-size:2.0em;
+        }
+
+        .twitter-share-button {
+            position:absolute;
+            top:2.3%;right:2%;
+        }
+
+        article div {
+            background-color:#fff;
+            position:absolute;
+            border:10px solid #fff;
+            position:absolute;
+            bottom:23%;top:20%;left:5%;right:5%;
+        }
+
+        article div div#corral {
+            border:0;
+            position:absolute;
+            bottom:0%;top:0%;left:0%;right:0%;
+            font-size:2.0em;color:#000;
+            line-height:1.0em;
+            padding:0.3em;
+            background-size:100%;
+            background-repeat:no-repeat;
+            background-position: 50% 50%;
+            opacity:0.5;
+        }
+
+
+        article div div {
+            border:0;
+            position:absolute;
+            bottom:0%;top:0%;left:0%;right:0%;
+            font-size:2.0em;color:#000;
+            line-height:1.0em;
+            padding:0.3em;
+            background-color:transparent;
+        }
+
+        .giddyup {
+            position:relative;
+            text-transform: uppercase;
+            width: 200px;
+            text-align: center;
+            font-size: 1.2em;
+            text-decoration: none;
+            margin: 0 auto;
+            display:none;
+            font-family:Bridle;
+            background:none;
+            border:0;
+            margin-top: 20%;
+            color:#fff;
+            text-shadow:
+                2px 2px 4px rgba(0,0,0,0.4),
+                -2px 2px 4px rgba(0,0,0,0.4),
+                2px -2px 4px rgba(0,0,0,0.4),
+                -2px -2px 4px rgba(0,0,0,0.4)
+            ;
+        }
+
+        .giddyup:hover {
+            color:#ff0;
+        }
+
+        footer {
+            position:absolute;top:80%;
+            bottom:0;left:0;right:0;
+            background-color:#fff;
+            padding-top:5%;
+            font-size:2.0em;
+            text-align:center;
+        }
+    }
+    @media only screen 
+        and (min-device-width : 320px) 
+        and (max-device-width : 568px) 
+        and (orientation : landscape) {/*iphone5 landscape*/
+
+        article div {
+            background-color:#fff;
+            position:absolute;
+            border:5px solid #fff;
+            position:absolute;
+            bottom:28%;top:15%;left:5%;right:5%;
+        }
+        footer {
+            position:absolute;top:75%;
+            bottom:0;left:0;right:0;
+            background-color:#fff;
+            padding-top:0%;
+        }
+
+    }
     </style>
     <script src="http://www.parsecdn.com/js/parse-1.2.9.min.js"></script>
     <script>
