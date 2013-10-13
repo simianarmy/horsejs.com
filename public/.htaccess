@@ -1,4 +1,6 @@
 RewriteEngine on
 ErrorDocument 404 http://horsejs.com/neigh.html
-RewriteRule ^(.+)$ http://localhost:3000/$1 [P]
+RewriteRule ^index.html$ http://localhost:3000/ [P]
+RewriteRule ^(fetch.+)$ http://localhost:3000/$1 [P]
+RewriteRule ^(more.+)$ http://localhost:3000/$1 [P]
 
