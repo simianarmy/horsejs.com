@@ -1,22 +1,59 @@
 'use strict';
+var Kaiseki = require('kaiseki');
+
+/**
+ * Query object - abstracts query parameters
+ */
+function Query (opts) {
+    this._params = opts || {};
+    this._params.limit = this._params.limit || 10;
+};
+
+Query.prototype.params = function () {
+    return this._params;
+};
+
+Query.prototype.limit = function (val) {
+    this._params.limit = val;
+};
+
+Query.prototype.descending = function (col) {
+    this._params.order = '-' + col;
+};
+
+Query.prototype.equalTo = function (key, val) {
+    this._params.where = this._params.where || {};
+    this._params.where[key] = val;
+};
+
+Query.prototype.lessThan = function (key, val) {
+    this._params.where = this._params.where || {};
+    this._params.where[key] = {'$lt': val};
+};
+
+/**
+ * @param {String} keys comma-separated list of column names
+ */
+Query.prototype.select = function (keys) {
+    this._params.keys = keys;
+};
+
 /**
  * HorseJS API object
  */
 
+function HorseJS (config) {
 
-function HorseJS (stuff) {
-    stuff = stuff || {};
-
-    this.PARSE_APP_ID = "M2DRuaNAnfzeQbBQubwFgfbmJJDRRbndjCCECou9";
-    this.PARSE_JS_KEY = "9wVUdSrAPT6kKEkuPURTOSgbFYVvwkPbQXT8tzvA";
     this.ParseHorseObject = 'HorseTweet';
     this.RandomQueryKey = 'tid';
-    this._lastID = null;
+    this._resultsPerQuery = config.limit || 10;
     this._randCache = [];
-    this._resultsPerQuery = stuff.limit || 10;
+    this._accountID = config.accountID || 0;
+    this._parse = new Kaiseki(config.appId, config.restKey);
+};
 
-    // Init Parse account
-    Parse.initialize(this.PARSE_APP_ID, this.PARSE_JS_KEY);
+HorseJS.prototype.setAccount = function (id) {
+    this._accountID = id;
 };
 
 /**
@@ -44,15 +81,16 @@ HorseJS.prototype.ready = function (optId, cb) {
  *   count {Number} number of items to fetch
  * @param {Function} cb
  */
-HorseJS.prototype.more = function (count, cb) {
+HorseJS.prototype.more = function (opts, cb) {
+    opts = opts || {};
     var query = this._createQuery(),
-        limit = count || this._resultsPerQuery;
+        limit = opts.count || this._resultsPerQuery;
 
     query.descending('tid');
     query.limit(limit);
 
-    if (this._lastID !== null) {
-        query.lessThan('tid', this._lastID);
+    if (opts.olderThan) {
+        query.lessThan('tid', opts.olderThan);
     }
     this._query(query, cb);
 };
@@ -63,26 +101,12 @@ HorseJS.prototype.more = function (count, cb) {
  * @param {Function} cb
  */
 HorseJS.prototype.load = function (id, cb) {
-    var self = this;
     var query = this._createQuery();
 
     query.equalTo(this.RandomQueryKey, id);
-    query.first({
-        success: function (results) {
-            if (typeof results === 'undefined') {
-                cb('Not found');
-            } else {
-                self._lastID = results.attributes.tid;
-                cb(null, [results.attributes]);
-            }
-        },
-        error: function (error) {
-            cb(error);
-        }
-    });
-};
+    query.limit(1);
 
-HorseJS.prototype.getEndpoint = function (id) {
+    this._query(query, cb);
 };
 
 /**
@@ -93,6 +117,10 @@ HorseJS.prototype.getEndpoint = function (id) {
  */
 HorseJS.prototype.random = function (cb) {
     var self = this;
+
+    //TODO: Implement for node version
+    cb('Operation not supported');
+    return;
 
     // Check cache first
     if (this._randCache.length === 0) {
@@ -112,8 +140,7 @@ HorseJS.prototype.random = function (cb) {
 };
 
 HorseJS.prototype._createQuery = function () {
-    var hjs = window.Parse.Object.extend(this.ParseHorseObject);
-    var query = new window.Parse.Query(hjs);
+    var query = new Query();
 
     return query;
 };
@@ -126,22 +153,18 @@ HorseJS.prototype._createQuery = function () {
 HorseJS.prototype._query = function (query, cb) {
     var self = this;
 
-    query.find({
-        success: function(results) {
+    this._parse.getObjects(this.ParseHorseObject, query.params(), function (err, results, body, success) {
+        console.log('err: ' + err);
+        console.log('results: ', results);
+        console.log('body: ', body);
+        if (success) {
             // The object was retrieved successfully.
-            // Save oldest tid
-            if (results.length > 0) {
-                self._lastID = results[results.length-1].attributes.tid;
-            }
-            // Convert to raw json object
-            cb(null, results.map(function (r) {
-                return r.attributes;
-            }));
-        },
-        error: function(error) {
+            // return raw json object
+            cb(null, body);
+        } else {
             // The object was not retrieved successfully.
             // error is a Parse.Error with an error code and description.
-            cb(error);
+            cb(err);
         }
     });
 };
@@ -151,3 +174,5 @@ HorseJS.prototype._pickRandom = function (cb) {
 
     this.load(id, cb);
 };
+
+module.exports = HorseJS;

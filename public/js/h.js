@@ -3,6 +3,7 @@ var horse = window.horse || {};
 
 horse = (function () {
     var cfg = {
+        accountID: 1,
         body: null,
         chortle: null,
         currentIndex: null,
@@ -37,7 +38,7 @@ horse = (function () {
     };
     var method = {
         giddyup: function () {
-            cfg.horse = new HorseJS();
+            cfg.horse = new HorseData(cfg.accountID);
             method.mane();
             method.groom();
         },
@@ -114,7 +115,7 @@ horse = (function () {
                     method.buck(error, tweets);
                 });
             } else {//otherwise use .more();
-                cfg.horse.more(10, method.buck.bind(method));
+                cfg.horse.more({limit: 10}, method.buck.bind(method));
             }
         },
         buck: function (error, tweets) {

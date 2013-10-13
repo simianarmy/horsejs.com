@@ -7,7 +7,8 @@ var express = require('express')
 , path = require('path')
 , ntwitter = require('ntwitter')
 , url = require('url')
-, config = require('./config/AppConfig');
+, config = require('./config/AppConfig')
+, horseAPI = require('./libs/horseapi');
 
 var app = express();
 
@@ -83,6 +84,45 @@ app.get('/twitter_callback', function(req, res){
 });
 
 /**
+ * Fetch a tweet, return its data
+ */
+app.get('/fetch/:aid/:tid', function (req, res) {
+    var api = app.get('api');
+
+    api.setAccount(req.params.aid);
+    api.load(req.params.tid, app._fetchHandler(res));
+});
+
+/**
+ * Fetch a bunch of tweets for some account
+ */
+app.get('/more/:aid', function (req, res) {
+    var api = app.get('api');
+
+    api.setAccount(req.params.aid);
+    api.more({count: req.query.limit, olderThan: req.query.maxid}, app._fetchHandler(res));
+});
+
+/**
+ * Helper to return fetch api responses
+ */
+app._fetchHandler = function (res) {
+    return function(err, data) {
+        var results;
+        if (err) {
+            results = {error: err, results: []};
+        } else {
+            results = {results: data};
+        }
+        res.writeHead(200, {
+            'Content-Type': 'application/x-javascript'
+        });
+        res.write(JSON.stringify(results));
+        res.end();
+    }
+};
+
+/**
  * Render a bookmarked tweet
  */
 app.get('/id/:tid', function (req, res) {
@@ -93,5 +133,6 @@ app.get('/id/:tid', function (req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+    app.set('api', new horseAPI(config.Parse));
+    console.log("Express server listening on port " + app.get('port'));
 });
