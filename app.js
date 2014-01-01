@@ -7,8 +7,8 @@ var express = require('express')
 , path = require('path')
 , ntwitter = require('ntwitter')
 , url = require('url')
-, config = require('./config/AppConfig')
-, horseAPI = require('./libs/horseapi');
+, config = require('config/AppConfig')
+, horseAPI = require('libs/horseapi');
 
 var app = express();
 
