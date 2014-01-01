@@ -1,0 +1,35 @@
+{
+  "name": "horsejs.com",
+  "version": "0.4.0",
+  "description": "Hear @horsejs tweets from a beautiful web interface",
+  "main": "app.js",
+  "dependencies": {
+    "ejs": "~0.8.5",
+    "express-partials": "~0.1.1",
+    "express": "~3.4.7",
+    "jade": "~0.35.0",
+    "ntwitter": "~0.5.0",
+    "parse": "~1.2.13",
+    "kaiseki": "~0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simianarmy/horsejs.com"
+  },
+  "keywords": [
+    "horsejs",
+    "javascript"
+  ],
+  "author": "Marc Mauger",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/simianarmy/horsejs.com/issues"
+  },
+  "engines": {
+      "node": "0.10.x"
+  }
+}
