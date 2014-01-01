@@ -50,7 +50,7 @@ function HorseJS (config) {
     this._randCache = [];
     this._accountID = config.accountID || 0;
     this._parse = new Kaiseki(config.appId, config.restKey);
-};
+}
 
 HorseJS.prototype.setAccount = function (id) {
     this._accountID = id;

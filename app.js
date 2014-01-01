@@ -7,8 +7,7 @@ var express = require('express')
 , path = require('path')
 , ntwitter = require('ntwitter')
 , url = require('url')
-, config = require('config/AppConfig')
-, horseAPI = require('libs/horseapi');
+, horseAPI = require('./libs/horseapi');
 
 var app = express();
 
@@ -42,10 +41,11 @@ app.get('/', function(req, res) {
 //app.get('/foo', routes.index);
 app.get('/signin_with_twitter', function(req, res){
 
-    console.log('twitter config', config.Twitter);
+    //console.log('twitter config', config.Twitter);
     var twit = new ntwitter({
-        consumer_key: config.Twitter.consumerKey,
-        consumer_secret: config.Twitter.consumerSecret});
+        consumer_key: process.env['TwitterConsumerKey'],
+        consumer_secret: process.env['TwitterConsumerSecret']
+    });
 
     var path = url.parse(req.url, true);
     twit.login(path.pathname,"/twitter_callback")(req,res);
@@ -61,8 +61,9 @@ app.get('/twitter_callback', function(req, res){
     console.log("Sucessfully Authenticated with Twitter...");
 
     var twit = new ntwitter({
-        consumer_key: config.Twitter.consumerKey,
-        consumer_secret: config.Twitter.consumerSecret});
+        consumer_key: process.env['TwitterConsumerKey'],
+        consumer_secret: process.env['TwitterConsumerSecret']
+    });
 
     twit.gatekeeper()(req,res,function(){
         req_cookie = twit.cookie(req);
@@ -133,6 +134,9 @@ app.get('/id/:tid', function (req, res) {
 });
 
 http.createServer(app).listen(app.get('port'), function(){
-    app.set('api', new horseAPI(config.Parse));
+    app.set('api', new horseAPI({
+        appId: process.env['ParseAppID'], 
+        restKey: process.env['ParseSecret']
+    }));
     console.log("Express server listening on port " + app.get('port'));
 });
