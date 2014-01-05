@@ -23,7 +23,7 @@ horse = (function () {
         saddle: null,
         tweets: [],
         tweet: {
-          audioUrlBase: 'http://neighs.horsejs.com/audio/'
+          audioUrlBase: 'https://s3-us-west-2.amazonaws.com/horsejs/'
         },
         endpointRegEx: /^#\/id\/([0-9]+)$/,
         share: {
