@@ -7,7 +7,7 @@ var Kaiseki = require('kaiseki');
 function Query (opts) {
     this._params = opts || {};
     this._params.limit = this._params.limit || 10;
-};
+}
 
 Query.prototype.params = function () {
     return this._params;
@@ -48,12 +48,12 @@ function HorseJS (config) {
     this.RandomQueryKey = 'tid';
     this._resultsPerQuery = config.limit || 10;
     this._randCache = [];
-    this._accountID = config.accountID || 0;
+    this._accountID = parseInt(config.accountID, 10) || 0;
     this._parse = new Kaiseki(config.appId, config.restKey);
 }
 
 HorseJS.prototype.setAccount = function (id) {
-    this._accountID = id;
+    this._accountID = parseInt(id, 10);
 };
 
 /**
@@ -142,6 +142,9 @@ HorseJS.prototype.random = function (cb) {
 HorseJS.prototype._createQuery = function () {
     var query = new Query();
 
+    // Account ID is required
+    query.equalTo('accountId', this._accountID);
+
     return query;
 };
 
@@ -153,6 +156,7 @@ HorseJS.prototype._createQuery = function () {
 HorseJS.prototype._query = function (query, cb) {
     var self = this;
 
+    console.log('query params', query.params());
     this._parse.getObjects(this.ParseHorseObject, query.params(), function (err, results, body, success) {
         console.log('err: ' + err);
         console.log('results: ', results);
