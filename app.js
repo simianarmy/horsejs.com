@@ -6,8 +6,7 @@ var express = require('express')
 , http = require('http')
 , path = require('path')
 , ntwitter = require('ntwitter')
-, url = require('url')
-, horseAPI = require('./libs/horseapi');
+, url = require('url');
 
 var app = express();
 
@@ -34,11 +33,21 @@ app.configure('development', function(){
  * Above this line are Express Defaults.
  */
 app.get('/', function(req, res) {
-    //horsejs.giddyup(app, req);
     res.render('index', { tid: null, user: app.locals.user || false });
 });
 
-//app.get('/foo', routes.index);
+/**
+ * Render a bookmarked tweet
+ */
+app.get('/id/:tid', function (req, res) {
+    res.render('index', { 
+        user: app.locals.user || false,
+        tid: req.params.tid
+    });
+});
+
+// Twitter auth endpoints
+//
 app.get('/signin_with_twitter', function(req, res){
 
     //console.log('twitter config', config.Twitter);
@@ -73,70 +82,17 @@ app.get('/twitter_callback', function(req, res){
         twit.verifyCredentials(function (err, data) {
             console.log("Verifying Credentials...");
             if (err) {
-                console.log("Verification failed : " + err)
+                console.log("Verification failed : " + err);
             } else {
                 console.log('Verified!', data);
                 app.locals.user = data;
             }
             res.writeHead(302, {'Location': '/'});
             res.end();
-        })
-    });
-});
-
-/**
- * Fetch a tweet, return its data
- */
-app.get('/fetch/:aid/:tid', function (req, res) {
-    var api = app.get('api');
-
-    api.setAccount(req.params.aid);
-    api.load(req.params.tid, app._fetchHandler(res));
-});
-
-/**
- * Fetch a bunch of tweets for some account
- */
-app.get('/more/:aid', function (req, res) {
-    var api = app.get('api');
-
-    api.setAccount(req.params.aid);
-    api.more({count: req.query.limit, olderThan: req.query.maxid}, app._fetchHandler(res));
-});
-
-/**
- * Helper to return fetch api responses
- */
-app._fetchHandler = function (res) {
-    return function(err, data) {
-        var results;
-        if (err) {
-            results = {error: err, results: []};
-        } else {
-            results = {results: data};
-        }
-        res.writeHead(200, {
-            'Content-Type': 'application/x-javascript'
         });
-        res.write(JSON.stringify(results));
-        res.end();
-    }
-};
-
-/**
- * Render a bookmarked tweet
- */
-app.get('/id/:tid', function (req, res) {
-    res.render('index', { 
-        user: app.locals.user || false,
-        tid: req.params.tid
     });
 });
 
 http.createServer(app).listen(app.get('port'), function(){
-    app.set('api', new horseAPI({
-        appId: process.env['ParseAppID'], 
-        restKey: process.env['ParseSecret']
-    }));
     console.log("Express server listening on port " + app.get('port'));
 });
