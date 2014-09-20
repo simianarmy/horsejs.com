@@ -1,8 +1,10 @@
 'use strict';
 
 /**
- * HorseData API wrapper
+ * Simple twhispr API wrapper
  */
+
+var TWHISPER_API_URL = 'http://api.twhispr.com/v1/';
 
 function HorseData (accountID) {
     this._id = accountID;
@@ -29,7 +31,7 @@ HorseData.prototype.ready = function (optId, cb) {
  * @param {Function} cb
  */
 HorseData.prototype.more = function (opts, cb) {
-    var uri = '/more/' + this._id,
+    var uri = TWHISPER_API_URL + 'more/' + this._id,
         queries = [];
 
     opts = opts || {};
@@ -51,7 +53,7 @@ HorseData.prototype.more = function (opts, cb) {
  * @param {Function} cb
  */
 HorseData.prototype.load = function (id, cb) {
-    this._query('/fetch/' + this._id + '/' + id, cb);
+    this._query(TWHISPER_API_URL + 'fetch/' + this._id + '/' + id, cb);
 };
 
 /**
@@ -74,18 +76,16 @@ HorseData.prototype._query = function (uri, cb) {
     var self = this;
 
     this._xhr.get(uri, function (res) {
-        if (res !== null) {
+        if (res !== null && res !== "") {
             var info = JSON.parse(res),
                 data;
 
             if (!info.err && info.results) {
-                // The object was retrieved successfully.
-                data = info.results;
                 // Save oldest tid
-                if (data.length > 0) {
-                    self._lastID = data[data.length-1].tid;
+                if (info.results.length > 0) {
+                    self._lastID = info.results[info.results.length-1].tid;
                 }
-                cb(null, data);
+                cb(null, info);
             } else {
                 cb(info.err);
             }

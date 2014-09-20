@@ -22,9 +22,6 @@ horse = (function () {
         },
         saddle: null,
         tweets: [],
-        tweet: {
-          audioUrlBase: 'https://s3-us-west-2.amazonaws.com/horsejs/'
-        },
         endpointRegEx: /^#\/id\/([0-9]+)$/,
         share: {
             hook: {
@@ -118,15 +115,16 @@ horse = (function () {
                 cfg.horse.more({limit: 10}, method.buck.bind(method));
             }
         },
-        buck: function (error, tweets) {
+        buck: function (error, data) {
             if (error) {
                 console.log('no apples');
             } else {
-                console.log(tweets);
+                console.log(data);
                 // append to list or initialize
-                cfg.tweets = cfg.tweets.concat(tweets);
+                cfg.tweets = cfg.tweets.concat(data.results);
+                cfg.audioUrlBase = data.audioSource;
 
-                if (cfg.tweets.length === tweets.length) {
+                if (cfg.tweets.length === data.results.length) {
                     cfg.currentIndex = 0;
                 }
 
@@ -289,7 +287,7 @@ horse = (function () {
          * @return {String} url to tweet audio file
          */
         getTweetAudioUrl: function (t) {
-            return cfg.tweet.audioUrlBase + t.tid + '.mp3';
+            return cfg.audioUrlBase + t.tid + '.mp3';
         },
         isEndpoint: function () {
             return typeof window.tid !== 'undefined';
