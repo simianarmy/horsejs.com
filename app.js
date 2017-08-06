@@ -32,6 +32,16 @@ app.configure('development', function(){
 /**
  * Above this line are Express Defaults.
  */
+
+/** Let's encrypt SSL Cert challenge response
+ */
+app.get("/.well-known/acme-challenge/8gQtBbmDLepRQDenl6hIYy16b-0rH_Og5GFlThJKNPU", function(req, res) {
+    res.send("8gQtBbmDLepRQDenl6hIYy16b-0rH_Og5GFlThJKNPU.E7xV6vEpNfWraUz2zp1fAq__2-qk84prGZpB9QjCg9I");
+});
+
+/**
+ * Home page route
+ */
 app.get('/', function(req, res) {
     res.render('index', { tid: null, user: app.locals.user || false });
 });
