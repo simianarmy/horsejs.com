@@ -4,7 +4,7 @@
  * Simple twhispr API wrapper
  */
 
-var TWHISPER_API_URL = 'http://api.twhispr.com/v1/';
+var TWHISPER_API_URL = 'https://api.twhispr.com/v1/';
 
 function HorseData (accountID) {
     this._id = accountID;
