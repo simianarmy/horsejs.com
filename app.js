@@ -35,8 +35,8 @@ app.configure('development', function(){
 
 /** Let's encrypt SSL Cert challenge response
  */
-app.get("/.well-known/acme-challenge/8gQtBbmDLepRQDenl6hIYy16b-0rH_Og5GFlThJKNPU", function(req, res) {
-    res.send("8gQtBbmDLepRQDenl6hIYy16b-0rH_Og5GFlThJKNPU.E7xV6vEpNfWraUz2zp1fAq__2-qk84prGZpB9QjCg9I");
+app.get("/.well-known/acme-challenge/gvozyhGE0GImvibh87PLRPDT3WShoy09a-hpAO7pifA", function(req, res) {
+    res.send("gvozyhGE0GImvibh87PLRPDT3WShoy09a-hpAO7pifA.E7xV6vEpNfWraUz2zp1fAq__2-qk84prGZpB9QjCg9I");
 });
 
 /**
