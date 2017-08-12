@@ -7,7 +7,7 @@
 // The DigitalOcean box is hosed
 //var TWHISPER_API_URL = 'https://api.twhispr.com/v1/';
 // It works on Heroku ??
-var TWHISPER_API_URL = 'https://api.twhispr.com/v1/';
+var TWHISPER_API_URL = 'http://api.twhispr.com.twhispr.com/v1/';
 
 function HorseData (accountID) {
     this._id = accountID;
