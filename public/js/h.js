@@ -120,14 +120,17 @@ horse = (function () {
         },
         feed: function () {
             var tid;
+            var firstTime = (cfg.currentIndex === null);
             var opts = {limit: 10, maxId: null};
 
-            if (cfg.currentIndex === null) {//first time so use .ready();
+            if (firstTime) {//first time so use .ready();
                 tid = method.getEndpointId();
             }
 
             if (tid) {
                 cfg.api.ports.getTweet.send(tid, opts);
+            } else if (firstTime) {
+                cfg.api.ports.getRandom.send(opts);
             } else {
                 cfg.api.ports.getMore.send(opts);
             }

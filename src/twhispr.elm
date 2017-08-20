@@ -1,8 +1,6 @@
 port module TwisprApi exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Http
 import Json.Decode as Decode exposing (..)
 
@@ -44,6 +42,7 @@ type alias ApiResponse =
 
 type Msg = Fetch String
     | Query QueryOpts
+    | FetchRandom QueryOpts
     | Fetched (Result Http.Error ApiResponse)
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -51,6 +50,8 @@ update msg model =
   case msg of
     Fetch id ->
         (model, fetchById model.accountId id)
+    FetchRandom opts ->
+        (model, fetchRandom model.accountId)
     Query opts ->
         let limit = Maybe.withDefault 10 opts.limit
             maxId = Maybe.withDefault model.lastId opts.maxId
@@ -76,6 +77,7 @@ subscriptions model =
   Sub.batch
       [ getTweet Fetch
       , getMore Query
+      , getRandom FetchRandom
       ]
 
 
@@ -87,16 +89,24 @@ port results : ApiResponse -> Cmd msg
 -- port for listening for data from JavaScript
 port getTweet : (String -> msg) -> Sub msg
 port getMore : (QueryOpts -> msg) -> Sub msg
+port getRandom : (QueryOpts -> msg) -> Sub msg
 
 -- HTTP
 
-fetchById : Int -> String -> Cmd Msg
-fetchById accountId id =
-    let url = twhisperApiUrl ++ "fetch/" ++ (toString accountId) ++ "/" ++ id
-        request =
-           Http.get url decodeResponse
+get : String -> Cmd Msg
+get url =
+    let request =
+        Http.get url apiResponseDecoder
     in
        Http.send Fetched request
+
+fetchById : Int -> String -> Cmd Msg
+fetchById accountId id =
+    get <| twhisperApiUrl ++ "fetch/" ++ (toString accountId) ++ "/" ++ id
+
+fetchRandom : Int -> Cmd Msg
+fetchRandom accountId =
+    get <| twhisperApiUrl ++ "rand/" ++ (toString accountId)
 
 --fetchMore : Int -> {c} -> Cmd Msg
 fetchMore accountId {limit, maxId} =
@@ -108,23 +118,13 @@ fetchMore accountId {limit, maxId} =
             |> List.intersperse "&"
             |> String.concat
         apiUrl = url ++ "?" ++ qs
-
-        --(if not <| limit == "" then "limit=" ++ ((Maybe.withDefault "10" limit) |> toString) else "") ++
-        --(if not <| maxId == "" then "&max=" ++ maxId else "")
-
-        request =
-           Http.get apiUrl decodeResponse
     in
-       Http.send Fetched request
+       get apiUrl
 
-
+apiResponseDecoder : Decode.Decoder ApiResponse
 apiResponseDecoder = Decode.map3 ApiResponse (Decode.field "results" (Decode.list Decode.value))
     (Decode.maybe <| Decode.field "audioSource" Decode.string)
     (Decode.maybe <| Decode.field "error" Decode.string)
-
-decodeResponse : Decode.Decoder ApiResponse
-decodeResponse =
-    apiResponseDecoder
 
 -- functions
 
