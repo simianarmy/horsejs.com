@@ -1,9 +1,10 @@
-'use strict';
+
 var horse = window.horse || {};
 
 horse = (function () {
     var cfg = {
         accountID: 1,
+        api: null,
         body: null,
         chortle: null,
         currentIndex: null,
@@ -35,7 +36,7 @@ horse = (function () {
     };
     var method = {
         giddyup: function () {
-            cfg.horse = new HorseData(cfg.accountID);
+            //cfg.horse = new HorseData(cfg.accountID);
             method.mane();
             method.groom();
         },
@@ -53,6 +54,18 @@ horse = (function () {
         },
         groom: function () {
             var self = this;
+
+            // Do the Elm magic first!
+            var node = document.getElementById('horsinaround');
+
+            cfg.api = Elm.TwisprApi.embed(node, {
+                accountId: cfg.accountID
+            });
+
+            cfg.api.ports.results.subscribe(function(tweets) {
+                console.log('TALKED TO ELM & HE SAID:', tweets);
+                method.buck(null, tweets);
+            });
 
             cfg.body = document.getElementById('stallion');
             cfg.neigh = document.getElementById('neigh');
@@ -106,13 +119,16 @@ horse = (function () {
             });
         },
         feed: function () {
+            var tid;
+
             if (cfg.currentIndex === null) {//first time so use .ready();
-                var id = method.getEndpointId();
-                cfg.horse.ready(id, function (error, tweets) {
-                    method.buck(error, tweets);
-                });
-            } else {//otherwise use .more();
-                cfg.horse.more({limit: 10}, method.buck.bind(method));
+                tid = method.getEndpointId();
+            }
+
+            if (tid) {
+                cfg.api.ports.getTweet.send(tid);
+            } else {
+                cfg.api.ports.getMore.send({limit: 10, maxId: null});
             }
         },
         buck: function (error, data) {
