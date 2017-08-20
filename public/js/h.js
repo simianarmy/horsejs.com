@@ -62,8 +62,8 @@ horse = (function () {
                 accountId: cfg.accountID
             });
 
-            cfg.api.ports.results.subscribe(function(tweets) {
-                console.log('TALKED TO ELM & HE SAID:', tweets);
+            cfg.api.ports.results.subscribe(function (tweets) {
+                console.log('TALKED TO ELM & SHE SAID:', tweets);
                 method.buck(null, tweets);
             });
 
@@ -120,22 +120,22 @@ horse = (function () {
         },
         feed: function () {
             var tid;
+            var opts = {limit: 10, maxId: null};
 
             if (cfg.currentIndex === null) {//first time so use .ready();
                 tid = method.getEndpointId();
             }
 
             if (tid) {
-                cfg.api.ports.getTweet.send(tid);
+                cfg.api.ports.getTweet.send(tid, opts);
             } else {
-                cfg.api.ports.getMore.send({limit: 10, maxId: null});
+                cfg.api.ports.getMore.send(opts);
             }
         },
         buck: function (error, data) {
             if (error) {
                 console.log('no apples');
             } else {
-                console.log(data);
                 // append to list or initialize
                 cfg.tweets = cfg.tweets.concat(data.results);
                 cfg.audioUrlBase = data.audioSource;

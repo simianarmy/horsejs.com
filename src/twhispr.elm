@@ -42,25 +42,22 @@ type alias ApiResponse =
 
 -- UPDATE
 
-type Msg = Init
-    | Fetch String
+type Msg = Fetch String
     | Query QueryOpts
     | Fetched (Result Http.Error ApiResponse)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Init ->
-        (model, Cmd.none)
     Fetch id ->
-        (model, fetchById model.accountId <| Debug.log "fetching by id " id)
+        (model, fetchById model.accountId id)
     Query opts ->
         let limit = Maybe.withDefault 10 opts.limit
             maxId = Maybe.withDefault model.lastId opts.maxId
         in
             (model, fetchMore model.accountId { limit = limit, maxId = maxId })
     Fetched (Ok response) ->
-        ({ model | lastId = Debug.log "saving last tweet id as " <| getLastTweetId response.results }, results response)
+        ({ model | lastId = getLastTweetId response.results }, results response)
     Fetched (Err err) ->
         ({ model | lastError = Debug.log "fetch FAILED" (toString err) }, Cmd.none)
 

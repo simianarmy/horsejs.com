@@ -9222,16 +9222,11 @@ var _simianarmy$horsejs$TwisprApi$update = F2(
 	function (msg, model) {
 		var _p4 = msg;
 		switch (_p4.ctor) {
-			case 'Init':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Fetch':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: A2(
-						_simianarmy$horsejs$TwisprApi$fetchById,
-						model.accountId,
-						A2(_elm_lang$core$Debug$log, 'fetching by id ', _p4._0))
+					_1: A2(_simianarmy$horsejs$TwisprApi$fetchById, model.accountId, _p4._0)
 				};
 			case 'Query':
 				var _p5 = _p4._0;
@@ -9253,10 +9248,7 @@ var _simianarmy$horsejs$TwisprApi$update = F2(
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								lastId: A2(
-									_elm_lang$core$Debug$log,
-									'saving last tweet id as ',
-									_simianarmy$horsejs$TwisprApi$getLastTweetId(_p6.results))
+								lastId: _simianarmy$horsejs$TwisprApi$getLastTweetId(_p6.results)
 							}),
 						_1: _simianarmy$horsejs$TwisprApi$results(_p6)
 					};
@@ -9303,7 +9295,6 @@ var _simianarmy$horsejs$TwisprApi$main = _elm_lang$html$Html$programWithFlags(
 				{accountId: accountId});
 		},
 		A2(_elm_lang$core$Json_Decode$field, 'accountId', _elm_lang$core$Json_Decode$int)));
-var _simianarmy$horsejs$TwisprApi$Init = {ctor: 'Init'};
 
 var Elm = {};
 Elm['TwisprApi'] = Elm['TwisprApi'] || {};
