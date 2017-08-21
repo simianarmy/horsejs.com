@@ -4,7 +4,7 @@
     "repository": "https://github.com/simianarmy/horsejs.git",
     "license": "BSD3",
     "source-directories": [
-        "nesting"
+        "src"
     ],
     "exposed-modules": [],
     "dependencies": {

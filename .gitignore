@@ -1,3 +1,4 @@
+node_modules/
 public/images/harras
 config/appconfig.js
 elm-stuff/

@@ -6,28 +6,28 @@ var express = require('express')
 , http = require('http')
 , path = require('path')
 , ntwitter = require('ntwitter')
-, url = require('url');
+, url = require('url')
+, favicon = require('serve-favicon')
+, session = require('express-session')
+, errorHandler = require('errorhandler')
+, methodOverride = require('method-override');
 
 var app = express();
 
-app.configure(function(){
-    app.set('port', process.env.PORT || 3000);
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'ejs');
-    app.use(express.favicon());
-    app.use(express.logger('dev'));
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser('secretsession'));
-    app.use(express.session());
-    app.use(app.router);
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.use(partials());
-});
+var env = process.env.NODE_ENV || 'development';
+if (env === 'development') {
+    app.use(errorHandler());
+}
 
-app.configure('development', function(){
-    app.use(express.errorHandler());
-});
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')))
+app.use(methodOverride());
+app.use(session({secret: 'secretsessionman', resave: true, saveUninitialized: false}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(partials());
+
 
 /**
  * Above this line are Express Defaults.

@@ -4,17 +4,37 @@
   "description": "Hear @horsejs tweets from a beautiful web interface",
   "main": "app.js",
   "dependencies": {
+    "ace-css": "1.1",
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "css-loader": "^0.28.5",
     "ejs": "~0.8.5",
-    "express-partials": "~0.1.1",
-    "express": "~3.4.7",
+    "elm-webpack-loader": "^4.3.1",
+    "errorhandler": "^1.5.0",
+    "express": "^4.0",
+    "express-partials": "^0.1.1",
+    "express-session": "^1.15.5",
+    "file-loader": "^0.11.2",
+    "font-awesome": "4",
+    "http": "0.0.0",
     "jade": "~0.35.0",
-    "ntwitter": "~0.5.0",
+    "kaiseki": "0.5.4",
+    "method-override": "^2.3.9",
+    "ntwitter": "^0.5.0",
     "parse": "~1.2.13",
-    "kaiseki": "0.5.4"
+    "path": "^0.12.7",
+    "serve-favicon": "^2.4.3",
+    "style-loader": "^0.18.2",
+    "url": "^0.11.0",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack",
+    "client": "./node_modules/.bin/webpack-dev-server --port 3000"
   },
   "repository": {
     "type": "git",
@@ -30,6 +50,6 @@
     "url": "https://github.com/simianarmy/horsejs.com/issues"
   },
   "engines": {
-      "node": "0.10.x"
+    "node": "0.10.x"
   }
 }
