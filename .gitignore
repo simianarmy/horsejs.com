@@ -2,5 +2,8 @@ node_modules/
 public/images/harras
 config/appconfig.js
 elm-stuff/
+dist/
+npm-debug.log
+yarn.lock
 index.html
 

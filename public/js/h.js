@@ -12,8 +12,6 @@ horse = (function () {
         duration: null,
         harras: {
             hook: null,
-            max: 48,
-            style: ''
         },
         horse: null,
         neigh: null,
@@ -71,19 +69,10 @@ horse = (function () {
             cfg.neigh = document.getElementById('neigh');
             cfg.saddle = document.getElementById('giddyup');
             cfg.corral = document.getElementById('corral');
-            cfg.harras.hook = document.getElementById('hook');
             cfg.share.hook = document.getElementById('twat');
             cfg.share.hack = document.getElementById('twit');
             cfg.share.hook.script = document.getElementById('heady');
             cfg.share.hook.link = document.getElementById('twitterHookLink');
-
-            var i;
-            cfg.harras.style = '<style>';
-            for (i=1;i<=cfg.harras.max;i++) {
-                cfg.harras.style += '.harras' + i + ' {background-image:url(/images/harras/' + i + '.jpg);}';
-            }
-            cfg.harras.style += '</style>';
-            cfg.harras.hook.innerHTML = cfg.harras.style;
 
             // Add history listener
             window.addEventListener("popstate", function(e) {

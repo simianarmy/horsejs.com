@@ -3,7 +3,7 @@ var path = require("path");
 module.exports = {
   entry: {
     app: [
-      './app.js'
+        './src/elm-index.js'
     ]
   },
 
@@ -43,6 +43,11 @@ module.exports = {
 
     noParse: /\.elm$/,
   },
+
+    node: {
+        fs: 'empty',
+        net: 'empty'
+    },
 
   devServer: {
     inline: true,
