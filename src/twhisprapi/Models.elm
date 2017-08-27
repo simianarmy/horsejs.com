@@ -2,7 +2,6 @@ module Models exposing (..)
 
 import RemoteData exposing (WebData)
 import Json.Decode as Decode exposing (..)
-import RemoteData exposing (WebData)
 
 type alias ApiResponse =
     { results: List Decode.Value

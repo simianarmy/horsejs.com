@@ -2,8 +2,11 @@ var path = require("path");
 
 module.exports = {
   entry: {
-    app: [
-        './src/elm-index.js'
+    api: [
+        './src/twhisprapi/elm-index.js'
+    ],
+    horse: [
+        './src/tweetview/elm-index.js'
     ]
   },
 
@@ -28,8 +31,19 @@ module.exports = {
       },
       {
         test:    /\.elm$/,
+        include: [
+            path.resolve(__dirname, "src/twhisprapi")
+        ],
         exclude: [/elm-stuff/, /node_modules/],
-        loader:  'elm-webpack-loader?verbose=true&warn=true',
+        loader:  'elm-webpack-loader?verbose=true&warn=true&cwd=' + __dirname + "/src/twhisprapi",
+      },
+      {
+        test:    /\.elm$/,
+        include: [
+            path.resolve(__dirname, "src/tweetview")
+        ],
+        exclude: [/elm-stuff/, /node_modules/],
+        loader:  'elm-webpack-loader?verbose=true&warn=true&cwd=' + __dirname + "/src/tweetview",
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

@@ -5,6 +5,6 @@ import RemoteData exposing (WebData)
 
 type Msg = Fetch String
     | Query QueryOpts
-    | OnFetchData (WebData ApiResponse)
     | FetchRandom QueryOpts
+    | OnFetchData (WebData ApiResponse)
 
