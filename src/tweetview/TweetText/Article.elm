@@ -3,7 +3,7 @@ module TweetText.Article exposing (..)
 import Html exposing (Html, div, text, program, article)
 import Html.Attributes as HA exposing (id)
 
-import Models exposing (Tweet)
+import Models exposing (Tweet, emptyTweet)
 import Msgs exposing (Msg)
 
 maxStyles : Int
@@ -11,20 +11,30 @@ maxStyles = 48
 
 view : Maybe Tweet -> Html Msg
 view model =
-    article [id "saddle"] [
-        div [] [ div [ corralAttributes model ] [] ]
-        , div [id "neigh"] []
-        ]
+    let tview = case model of
+        Just tweet -> tweetView tweet
+        Nothing -> emptyView
+    in
+    article [id "saddle"] [ tview ]
 
-corralAttributes : Maybe Tweet -> Html.Attribute msg
-corralAttributes model =
-    case model of
-        Just t ->
-            HA.style [ ("opacity", "0.5")
-                  , ("class", saddleClass t)
-                  ]
-        Nothing ->
-            HA.style [ ("opacity", "1") ]
+
+tweetView : Tweet -> Html Msg
+tweetView tweet =
+    div [ HA.style [ ("opacity", "0.5")
+         , ("class", saddleClass tweet) ] ]
+        [ div [id "neigh"] [ neigh tweet ] ]
+
+
+emptyView : Html Msg
+emptyView =
+    div [ HA.style [ ("opacity", "1") ] ]
+    [ text "no tweet" ]
+
+
+neigh : Tweet -> Html Msg
+neigh tweet =
+    text <| "found one: " ++ (String.join " " tweet.words)
+
 
 saddleClass : Tweet -> String
 saddleClass model =

@@ -15,3 +15,7 @@ type alias Model =
 initialModel : Model
 initialModel =
     Model Array.empty -1
+
+emptyTweet : Tweet
+emptyTweet =
+    Tweet "" []

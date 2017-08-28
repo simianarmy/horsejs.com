@@ -7,5 +7,5 @@ import Models exposing (Tweet)
 
 type Msg
     = NoOp
-    | NewTweets (List Tweet)
+    | AddTweets (List Tweet)
 

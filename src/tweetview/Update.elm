@@ -9,5 +9,8 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         Msgs.NoOp -> (model, Cmd.none)
-        Msgs.NewTweets tweets ->
-            ({ model | tweets = Array.fromList tweets }, Cmd.none)
+        Msgs.AddTweets tweets ->
+            ({ model |
+            tweets = Array.fromList tweets,
+            currentIndex = 0
+            }, Cmd.none)

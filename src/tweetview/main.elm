@@ -6,6 +6,7 @@ import Msgs exposing (Msg)
 import Models exposing (Model, initialModel)
 import Update exposing (update)
 import TweetText.Article
+import Ports exposing (addTweets)
 
 -- MODEL
 
@@ -35,7 +36,8 @@ page model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch
+    [ addTweets Msgs.AddTweets ]
 
 
 -- MAIN
