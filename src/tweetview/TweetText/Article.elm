@@ -1,22 +1,31 @@
 module TweetText.Article exposing (..)
 
-view : Model -> Html Msg
+import Html exposing (Html, div, text, program, article)
+import Html.Attributes as HA exposing (id)
+
+import Models exposing (Tweet)
+import Msgs exposing (Msg)
+
+maxStyles : Int
+maxStyles = 48
+
+view : Maybe Tweet -> Html Msg
 view model =
     article [id "saddle"] [
         div [] [ div [ corralAttributes model ] [] ]
         , div [id "neigh"] []
         ]
 
-corralAttributes : Model -> Html.Attribute msg
+corralAttributes : Maybe Tweet -> Html.Attribute msg
 corralAttributes model =
-    case model.tweet of
+    case model of
         Just t ->
             HA.style [ ("opacity", "0.5")
-                  , ("class", saddleClass model)
+                  , ("class", saddleClass t)
                   ]
         Nothing ->
             HA.style [ ("opacity", "1") ]
 
-saddleClass : Model -> String
+saddleClass : Tweet -> String
 saddleClass model =
     "harras1"

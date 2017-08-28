@@ -1,17 +1,17 @@
 module TweetView exposing (..)
 
 import Html exposing (Html, program, div, text, program, article)
-import Html.Attributes as HA exposing (id)
+import Array exposing (Array, get)
 import Msgs exposing (Msg)
 import Models exposing (Model, initialModel)
---import Update exposing (update)
+import Update exposing (update)
 import TweetText.Article
 
 -- MODEL
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model.initialModel, Cmd.none )
+    ( initialModel, Cmd.none )
 
 
 -- VIEW
@@ -24,7 +24,10 @@ view model =
 
 page : Model -> Html Msg
 page model =
-    TweetText.Article.view model
+    if model.currentIndex == -1
+       then text "NOTHING"
+       else
+       TweetText.Article.view (get model.currentIndex model.tweets)
 
 
 -- SUBSCRIPTIONS

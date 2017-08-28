@@ -4,8 +4,7 @@
     "repository": "https://github.com/simianarmy/horsejs.git",
     "license": "BSD3",
     "source-directories": [
-        "./",
-        "src/tweetview"
+        "./"
     ],
     "exposed-modules": [],
     "dependencies": {

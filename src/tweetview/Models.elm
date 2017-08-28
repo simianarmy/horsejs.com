@@ -1,6 +1,6 @@
 module Models exposing (..)
 
-maxStyles = 48
+import Array exposing (Array)
 
 type alias Tweet =
     { tid: String
@@ -8,9 +8,10 @@ type alias Tweet =
     }
 
 type alias Model =
-    { tweet: Maybe Tweet
+    { tweets: Array Tweet
+    , currentIndex: Int
     }
 
 initialModel : Model
 initialModel =
-    Model Nothing
+    Model Array.empty -1
