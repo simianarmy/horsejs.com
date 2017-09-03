@@ -1,34 +1,22 @@
 module TweetView exposing (..)
 
-import Html exposing (Html, program, div, text, program, article)
 import Array exposing (Array, get)
+import Navigation exposing (Location)
+import Routing
+import View exposing (view)
 import Msgs exposing (Msg)
 import Models exposing (Model, initialModel)
 import Update exposing (update)
-import TweetText.Article
 import Ports exposing (addTweets)
 
 -- MODEL
 
-init : ( Model, Cmd Msg )
-init =
-    ( initialModel, Cmd.none )
-
-
--- VIEW
-
-
-view : Model -> Html Msg
-view model =
-    div []
-    [ page model ]
-
-page : Model -> Html Msg
-page model =
-    if model.currentIndex == -1
-       then text "NOTHING"
-       else
-       TweetText.Article.view (get model.currentIndex model.tweets)
+init : Location -> ( Model, Cmd Msg )
+init location =
+    let currentRoute = Routing.parseLocation location
+    in
+        -- TODO: ( initialModel currentRoute, fetchTweets )
+        ( initialModel currentRoute, Cmd.none )
 
 
 -- SUBSCRIPTIONS
@@ -45,7 +33,7 @@ subscriptions model =
 
 main : Program Never Model Msg
 main =
-    program
+    Navigation.program Msgs.OnLocationChange
     { init = init
     , view = view
     , update = update

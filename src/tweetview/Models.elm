@@ -1,21 +1,38 @@
 module Models exposing (..)
 
-import Array exposing (Array)
+import List
+
+type alias TweetId = String
 
 type alias Tweet =
-    { tid: String
+    { tid: TweetId
     , words: List String
     }
 
 type alias Model =
-    { tweets: Array Tweet
-    , currentIndex: Int
+    { tweets: List Tweet
+    , wordCountVisible: Int
+    , route: Route
     }
 
-initialModel : Model
-initialModel =
-    Model Array.empty -1
+type Route
+    = TweetsRoute
+    | TweetRoute TweetId
+    | NotFoundRoute
+
+initialModel : Route -> Model
+initialModel route =
+    { tweets = []
+    , wordCountVisible = 0
+    , route = route
+    }
 
 emptyTweet : Tweet
 emptyTweet =
     Tweet "" []
+
+getTweetById : TweetId -> List Tweet -> Maybe Tweet
+getTweetById id tweets =
+    let found =List.filter (\t -> id == t.tid) tweets
+    in
+       List.head found

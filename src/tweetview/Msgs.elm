@@ -1,6 +1,8 @@
 module Msgs exposing (..)
 
 import Models exposing (Tweet)
+import Navigation exposing (Location)
+
 
 -- MESSAGES
 
@@ -8,4 +10,5 @@ import Models exposing (Tweet)
 type Msg
     = NoOp
     | AddTweets (List Tweet)
+    | OnLocationChange Location
 

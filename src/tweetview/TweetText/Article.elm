@@ -9,20 +9,20 @@ import Msgs exposing (Msg)
 maxStyles : Int
 maxStyles = 48
 
-view : Maybe Tweet -> Html Msg
-view model =
+view : Maybe Tweet -> Int -> Html Msg
+view model wordCount =
     let tview = case model of
-        Just tweet -> tweetView tweet
+        Just tweet -> tweetView tweet wordCount
         Nothing -> emptyView
     in
     article [id "saddle"] [ tview ]
 
 
-tweetView : Tweet -> Html Msg
-tweetView tweet =
+tweetView : Tweet -> Int -> Html Msg
+tweetView tweet wordCount =
     div [ HA.style [ ("opacity", "0.5")
          , ("class", saddleClass tweet) ] ]
-        [ div [id "neigh"] [ neigh tweet ] ]
+        [ div [id "neigh"] [ neigh tweet wordCount ] ]
 
 
 emptyView : Html Msg
@@ -31,8 +31,8 @@ emptyView =
     [ text "no tweet" ]
 
 
-neigh : Tweet -> Html Msg
-neigh tweet =
+neigh : Tweet -> Int -> Html Msg
+neigh tweet wordCount =
     text <| "found one: " ++ (String.join " " tweet.words)
 
 
