@@ -11,4 +11,5 @@ type Msg
     = NoOp
     | AddTweets (List Tweet)
     | OnLocationChange Location
+    | ShowNext
 

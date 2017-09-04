@@ -1,8 +1,7 @@
 module Update exposing (..)
 
-import List.Extra exposing (splitWhen)
 import Msgs exposing (Msg)
-import Models exposing (Model, Tweet, TweetId, Route)
+import Models exposing (Model, Tweet, TweetId, Route, dropUpTo, maybeDropUpTo)
 import Routing exposing (parseLocation)
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -26,13 +25,18 @@ update msg model =
                case newRoute of
                    Models.TweetRoute tid ->
                        ({ model_ |
-                       tweets = Debug.log "remaining: " <| dropUpTo tid model.tweets
+                       currentTweetId = Just tid
                        },
                        Cmd.none)
                    _ -> (model_, Cmd.none)
 
-dropUpTo : TweetId -> List Tweet -> List Tweet
-dropUpTo tid list =
-    case splitWhen (\t -> t.tid == tid) list of
-        Just (a, b) -> b
-        _ -> list
+        Msgs.ShowNext ->
+            case Debug.log "looking at tweet id" model.currentTweetId of
+                Just t ->
+                    let next = Debug.log "found next" <| List.head (maybeDropUpTo model.currentTweetId model.tweets)
+                    in
+                       ({ model | currentTweetId = Maybe.map .tid next }, Cmd.none)
+                Nothing ->
+                    let nextUp = Debug.log "found head" <| List.head model.tweets
+                    in 
+                       ({ model | currentTweetId = Maybe.map .tid nextUp }, Cmd.none)
